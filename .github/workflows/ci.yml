@@ -1,0 +1,32 @@
+name: Checks
+
+# Builds the site on every push, so a broken change is noticed before it goes live.
+# It needs no secrets: the three addresses below are placeholders, just so the build can run.
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Type check
+        run: npm run typecheck
+      - name: Lint (a warning here does not stop the build)
+        run: npm run lint
+        continue-on-error: true
+      - name: Build
+        run: npm run build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: https://example.supabase.co
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ci-placeholder-key
+          NEXT_PUBLIC_SITE_URL: https://example.com

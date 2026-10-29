@@ -1,0 +1,54 @@
+# Every Sunday night (about 2 AM Monday in India) this saves ALL client photos as one file.
+# The file is kept for 30 days under Actions -> this workflow run -> Artifacts.
+# Needs GitHub secrets (Settings -> Secrets and variables -> Actions). Photos in Supabase Storage (the default):
+#   SUPABASE_URL       the Project URL
+#   SUPABASE_ANON_KEY  the "anon" (publishable) key. Both are PUBLIC values; the secret service-role key is NOT used here.
+# Only if you moved the photos to Cloudflare R2 (see MILESTONE-18.md), add these four instead (use a READ-ONLY R2 token):
+#   R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_BUCKET
+# The photos are already public on the cards, so this file is not encrypted: anyone who gets it can see only what visitors can already see.
+name: Weekly photo backup
+
+on:
+  schedule:
+    - cron: '43 20 * * 0'
+  workflow_dispatch:
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get the project files
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install the small helper that talks to R2 (not used with Supabase)
+        run: npm install --no-save --no-package-lock aws4fetch@^1.0.20
+
+      - name: Download every photo
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_BUCKET: ${{ secrets.R2_BUCKET }}
+        run: node scripts/backup-photos.mjs
+
+      - name: Pack the photos into one file
+        run: |
+          set -euo pipefail
+          STAMP=$(date -u +%Y-%m-%d)
+          tar -czf "photos-$STAMP.tar.gz" -C photo-backup .
+          ls -l photos-*.tar.gz
+
+      - name: Keep the file for 30 days
+        uses: actions/upload-artifact@v4
+        with:
+          name: photo-backup
+          path: photos-*.tar.gz
+          retention-days: 30
+          if-no-files-found: error

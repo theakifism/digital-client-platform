@@ -1,0 +1,18 @@
+.web-block { border: 1px solid var(--border); border-radius: 0.75rem; padding: 1rem; margin-top: 1rem; }
+.web-block.web-off { opacity: 0.85; }
+.web-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.5rem 1rem; }
+.web-head h2 { margin: 0; font-size: 1.15rem; }
+.web-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.75rem; }
+.web-show { display: flex; align-items: center; gap: 0.4rem; margin: 0; font-weight: 600; }
+.web-show input { width: auto; }
+.web-body { margin-top: 0.75rem; display: grid; gap: 0.75rem; }
+.web-field { display: block; margin: 0; }
+.web-field > span { display: block; font-weight: 600; margin-bottom: 0.25rem; }
+.web-item { border: 1px dashed var(--border); border-radius: 0.5rem; padding: 0.75rem; display: grid; gap: 0.6rem; }
+.web-item-top { display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; }
+.web-thumbs { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 0.75rem; }
+.web-thumb { display: grid; gap: 0.4rem; }
+.web-thumb img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 0.5rem; border: 1px solid var(--border); }
+.web-small { padding: 0.35rem 0.7rem; font-size: 0.9rem; }
+.web-note { color: var(--muted); font-size: 0.9rem; margin: 0; }
+.web-block textarea { min-height: 5rem; }

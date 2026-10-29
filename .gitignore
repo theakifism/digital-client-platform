@@ -1,5 +1,3 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
 # dependencies
 /node_modules
 /.pnp
@@ -30,12 +28,23 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
+# env files: real keys stay private, only the example file is committed
 .env*
-
-# vercel
-.vercel
+!.env.example
 
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# photo backups downloaded by scripts/backup-photos.mjs
+/photo-backup/
+/photo-restore/
+photos-*.tar.gz
+
+# Local Netlify folder
+.netlify
+
+.vercel
+.open-next
+.wrangler
+.dev.vars

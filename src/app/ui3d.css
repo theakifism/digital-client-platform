@@ -1,0 +1,279 @@
+/* "Depth" look for the home page, login, client dashboard, admin panel, contact and privacy (Milestone 19).
+   Everything is scoped under .ui3d so the public cards and small websites are NOT affected.
+   Light and dark follow the phone or computer setting. Layers: soft mesh background -> glass panels -> raised cards -> 3D buttons.
+   No images, no libraries, no JavaScript for the effects: they are plain CSS, and they switch off for people who prefer less motion. */
+
+.ui3d {
+  --bg: #eef1fa;
+  --text: #12151f;
+  --muted: #566073;
+  --border: rgba(18, 21, 31, 0.1);
+  --accent: #3f5bf0;
+  --accent-text: #ffffff;
+  --notice-bg: rgba(63, 91, 240, 0.09);
+
+  --u-accent-2: #8a5cff;
+  --u-surface: #ffffff;
+  --u-solid: #ffffff;
+  --u-glass: rgba(255, 255, 255, 0.72);
+  --u-edge: rgba(255, 255, 255, 0.95);
+  --u-shadow-1: 0 1px 2px rgba(16, 24, 48, 0.07), 0 2px 6px rgba(16, 24, 48, 0.05);
+  --u-shadow-2: 0 1px 1px rgba(16, 24, 48, 0.04), 0 6px 12px -2px rgba(16, 24, 48, 0.08), 0 18px 36px -12px rgba(16, 24, 48, 0.18);
+  --u-shadow-3: 0 2px 2px rgba(16, 24, 48, 0.05), 0 14px 24px -6px rgba(16, 24, 48, 0.12), 0 40px 70px -20px rgba(40, 52, 120, 0.3);
+  --u-btn: linear-gradient(180deg, #5873ff 0%, #4a64f5 50%, #3a52e3 100%);
+  --u-btn-text: #ffffff;
+  --u-btn-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), inset 0 -3px 0 rgba(0, 0, 20, 0.16), 0 8px 16px -4px rgba(58, 82, 227, 0.55), 0 2px 3px rgba(16, 24, 48, 0.25);
+  --u-field: inset 0 2px 4px rgba(16, 24, 48, 0.08), inset 0 0 0 1px rgba(18, 21, 31, 0.1);
+  --u-mesh-a: rgba(99, 102, 241, 0.26);
+  --u-mesh-b: rgba(34, 211, 238, 0.2);
+  --u-mesh-c: rgba(236, 72, 153, 0.14);
+  --u-danger: #b3261e;
+
+  position: relative;
+  min-height: 100vh;
+  min-height: 100dvh;
+  color: var(--text);
+  background: var(--bg);
+  font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI Variable', 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  isolation: isolate;
+}
+
+@media (prefers-color-scheme: dark) {
+  .ui3d {
+    --bg: #080a12;
+    --text: #eef0f8;
+    --muted: #a3abc0;
+    --border: rgba(255, 255, 255, 0.1);
+    --accent: #8aa0ff;
+    --accent-text: #0a0c14;
+    --notice-bg: rgba(138, 160, 255, 0.12);
+
+    --u-accent-2: #b39bff;
+    --u-surface: rgba(255, 255, 255, 0.06);
+    --u-solid: #141a2e;
+    --u-glass: rgba(16, 20, 36, 0.66);
+    --u-edge: rgba(255, 255, 255, 0.14);
+    --u-shadow-1: 0 1px 0 rgba(255, 255, 255, 0.05) inset, 0 4px 10px rgba(0, 0, 0, 0.4);
+    --u-shadow-2: 0 1px 0 rgba(255, 255, 255, 0.07) inset, 0 10px 24px -8px rgba(0, 0, 0, 0.7), 0 30px 60px -24px rgba(0, 0, 0, 0.75);
+    --u-shadow-3: 0 1px 0 rgba(255, 255, 255, 0.09) inset, 0 18px 36px -10px rgba(0, 0, 0, 0.75), 0 50px 90px -30px rgba(70, 90, 255, 0.35);
+    --u-btn: linear-gradient(180deg, #a3b4ff 0%, #8aa0ff 50%, #748dfa 100%);
+    --u-btn-text: #0a0c14;
+    --u-btn-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55), inset 0 -3px 0 rgba(10, 20, 80, 0.25), 0 10px 22px -4px rgba(110, 135, 255, 0.5), 0 2px 3px rgba(0, 0, 0, 0.5);
+    --u-field: inset 0 2px 5px rgba(0, 0, 0, 0.45), inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+    --u-mesh-a: rgba(99, 102, 241, 0.3);
+    --u-mesh-b: rgba(34, 211, 238, 0.14);
+    --u-mesh-c: rgba(236, 72, 153, 0.13);
+    --u-danger: #ff9a90;
+  }
+}
+
+/* the colour behind the page, also when the page is pulled past its end on a phone */
+body:has(> .ui3d) { background: #eef1fa; }
+@media (prefers-color-scheme: dark) { body:has(> .ui3d) { background: #080a12; } }
+
+/* soft mesh of light behind everything */
+.ui3d::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(56rem 38rem at 8% -8%, var(--u-mesh-a), transparent 62%),
+    radial-gradient(48rem 34rem at 100% 2%, var(--u-mesh-b), transparent 58%),
+    radial-gradient(52rem 40rem at 55% 118%, var(--u-mesh-c), transparent 62%);
+}
+
+.ui3d *, .ui3d *::before, .ui3d *::after { box-sizing: border-box; }
+.ui3d h1, .ui3d h2, .ui3d h3 { letter-spacing: -0.02em; line-height: 1.15; }
+.ui3d h1 { font-size: clamp(1.7rem, 4.6vw, 2.2rem); margin: 0.5rem 0 0.35rem; }
+.ui3d h2 { font-size: 1.15rem; margin: 0 0 0.75rem; }
+.ui3d a { color: var(--accent); }
+.ui3d .muted { color: var(--muted); }
+.ui3d ::selection { background: rgba(99, 102, 241, 0.3); }
+
+.ui3d .logo-chip {
+  display: inline-flex; align-items: center; padding: 0.4rem 0.7rem; background: #ffffff; border-radius: 0.8rem;
+  box-shadow: var(--u-shadow-1), inset 0 -2px 0 rgba(16, 24, 48, 0.05); line-height: 0;
+}
+.ui3d .logo-chip img { width: 7rem; height: auto; display: block; }
+
+/* ---------- raised cards ---------- */
+.ui3d .dash-section, .ui3d .adm-box, .ui3d .adm-stat, .ui3d .page-card, .ui3d .depth-card {
+  position: relative;
+  background: var(--u-surface);
+  border: 1px solid var(--border);
+  border-radius: 1.15rem;
+  box-shadow: var(--u-shadow-2), inset 0 1px 0 var(--u-edge);
+  padding: 1.1rem;
+  margin-top: 1rem;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+@media (prefers-color-scheme: dark) {
+  .ui3d .dash-section, .ui3d .adm-box, .ui3d .adm-stat, .ui3d .page-card, .ui3d .depth-card { backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+}
+.ui3d .adm-stat { margin-top: 0; text-decoration: none; }
+
+/* ---------- 3D buttons ---------- */
+.ui3d button, .ui3d .button {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+  min-height: 2.9rem; padding: 0.7rem 1.2rem;
+  font: inherit; font-weight: 650; letter-spacing: 0.01em; text-decoration: none; cursor: pointer;
+  color: var(--u-btn-text); background: var(--u-btn); border: 0; border-radius: 0.85rem;
+  box-shadow: var(--u-btn-shadow);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+}
+.ui3d button:active, .ui3d .button:active {
+  transform: translateY(2px);
+  box-shadow: inset 0 2px 5px rgba(0, 0, 40, 0.3), 0 1px 2px rgba(16, 24, 48, 0.2);
+}
+.ui3d button:disabled { opacity: 0.6; cursor: wait; transform: none; }
+.ui3d button.secondary, .ui3d .button.secondary {
+  color: var(--text); background: var(--u-surface); border: 1px solid var(--border);
+  box-shadow: var(--u-shadow-1), inset 0 1px 0 var(--u-edge), inset 0 -2px 0 rgba(16, 24, 48, 0.06);
+}
+.ui3d button.link { min-height: 0; padding: 0; background: none; box-shadow: none; color: var(--accent); font-weight: 600; text-align: left; }
+.ui3d button.link:active { transform: none; box-shadow: none; }
+
+/* ---------- fields that look pressed in ---------- */
+.ui3d input, .ui3d textarea, .ui3d select {
+  width: 100%; padding: 0.8rem 0.9rem; font: inherit; color: inherit;
+  background: rgba(255, 255, 255, 0.55); border: 0; border-radius: 0.8rem; box-shadow: var(--u-field);
+  transition: box-shadow 0.2s ease, background 0.2s ease;
+}
+@media (prefers-color-scheme: dark) { .ui3d input, .ui3d textarea, .ui3d select { background: rgba(0, 0, 0, 0.28); } }
+.ui3d input[type='checkbox'], .ui3d input[type='radio'] { width: auto; padding: 0; box-shadow: none; background: none; accent-color: var(--accent); }
+.ui3d input[type='file'] { padding: 0.55rem; }
+.ui3d input:focus-visible, .ui3d textarea:focus-visible, .ui3d select:focus-visible {
+  outline: none; box-shadow: var(--u-field), 0 0 0 3px color-mix(in srgb, var(--accent) 45%, transparent);
+}
+.ui3d button:focus-visible, .ui3d a:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+.ui3d select option { color: #16181d; }
+.ui3d label { display: block; font-weight: 600; margin-bottom: 0.3rem; }
+
+.ui3d .notice { margin: 0; padding: 0.8rem 1rem; background: var(--notice-bg); border: 1px solid var(--border); border-radius: 0.9rem; box-shadow: var(--u-shadow-1); }
+.ui3d .dash-error, .ui3d .adm-error, .ui3d .dash-error-box, .ui3d .adm-error-box { color: var(--u-danger); }
+
+.ui3d .adm-badge, .ui3d .lead-badge { box-shadow: var(--u-shadow-1); background: var(--u-surface); }
+
+/* ---------- shell: floating glass sidebar on computers, top bar plus floating dock on phones ---------- */
+.ui3d .shell-mobilebar {
+  position: sticky; top: 0; z-index: 30; padding: 0.6rem 0.9rem;
+  padding-top: calc(0.6rem + env(safe-area-inset-top, 0px));
+  background: var(--u-glass); backdrop-filter: blur(16px) saturate(1.3); -webkit-backdrop-filter: blur(16px) saturate(1.3);
+  border-bottom: 1px solid var(--border); box-shadow: var(--u-shadow-1);
+}
+.ui3d .shell-top { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; }
+.ui3d .shell-top .logo-chip img { width: 5.5rem; }
+.ui3d .shell-top button { min-height: 2.4rem; padding: 0.4rem 0.9rem; }
+.ui3d .shell-side { display: none; }
+.ui3d .shell-main { padding: 0.5rem 0.9rem 7rem; }
+
+.ui3d .shell-nav { display: flex; }
+.ui3d .shell-nav a {
+  display: flex; align-items: center; gap: 0.7rem; padding: 0.7rem 0.85rem; border-radius: 0.9rem;
+  color: var(--text); text-decoration: none; font-weight: 600; font-size: 0.97rem;
+  transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+.ui3d .shell-nav svg { width: 1.3rem; height: 1.3rem; flex: none; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; opacity: 0.85; }
+.ui3d .shell-nav a[aria-current='page'] {
+  color: var(--u-btn-text); background: var(--u-btn); box-shadow: var(--u-btn-shadow);
+}
+.ui3d .shell-nav a[aria-current='page'] svg { opacity: 1; }
+
+/* phone: floating dock at the bottom (client) */
+.ui3d .shell-nav-dock {
+  position: fixed; left: 50%; transform: translateX(-50%); z-index: 40;
+  bottom: calc(0.8rem + env(safe-area-inset-bottom, 0px)); width: min(94vw, 30rem);
+  justify-content: space-around; gap: 0.2rem; padding: 0.4rem;
+  background: var(--u-glass); backdrop-filter: blur(18px) saturate(1.4); -webkit-backdrop-filter: blur(18px) saturate(1.4);
+  border: 1px solid var(--border); border-radius: 1.5rem; box-shadow: var(--u-shadow-3), inset 0 1px 0 var(--u-edge);
+}
+.ui3d .shell-nav-dock a { flex: 1; flex-direction: column; gap: 0.15rem; padding: 0.55rem 0.2rem; font-size: 0.72rem; text-align: center; border-radius: 1.1rem; }
+
+/* phone: scrolling strip under the top bar (admin) */
+.ui3d .shell-nav-strip { gap: 0.4rem; overflow-x: auto; padding: 0.55rem 0 0.1rem; scrollbar-width: none; }
+.ui3d .shell-nav-strip::-webkit-scrollbar { display: none; }
+.ui3d .shell-nav-strip a { flex: none; padding: 0.45rem 0.8rem; font-size: 0.88rem; background: var(--u-surface); border: 1px solid var(--border); box-shadow: var(--u-shadow-1); }
+.ui3d .shell-nav-strip svg { display: none; }
+
+@media (min-width: 64rem) {
+  .ui3d .shell { display: grid; grid-template-columns: 17.5rem minmax(0, 1fr); gap: 1.5rem; padding: 1.1rem; align-items: start; }
+  .ui3d .shell-mobilebar, .ui3d .shell-nav-dock, .ui3d .shell-nav-strip { display: none; }
+  .ui3d .shell-side {
+    display: flex; flex-direction: column; gap: 1rem; position: sticky; top: 1.1rem; height: calc(100dvh - 2.2rem); padding: 1.1rem;
+    background: var(--u-glass); backdrop-filter: blur(20px) saturate(1.4); -webkit-backdrop-filter: blur(20px) saturate(1.4);
+    border: 1px solid var(--border); border-radius: 1.6rem; box-shadow: var(--u-shadow-3), inset 0 1px 0 var(--u-edge);
+  }
+  .ui3d .shell-title { margin: 0; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+  .ui3d .shell-nav-side { flex-direction: column; gap: 0.3rem; overflow-y: auto; }
+  .ui3d .shell-nav-side a:hover:not([aria-current='page']) { background: var(--notice-bg); transform: translateX(3px); }
+  .ui3d .shell-foot { margin-top: auto; display: flex; flex-direction: column; gap: 0.6rem; padding-top: 0.9rem; border-top: 1px solid var(--border); }
+  .ui3d .shell-foot span { word-break: break-all; font-size: 0.9rem; }
+  .ui3d .shell-main { padding: 0.3rem 0.5rem 3rem; max-width: 62rem; width: 100%; }
+}
+
+/* ---------- client dashboard ---------- */
+.ui3d .dash { max-width: 44rem; margin: 0; padding: 0; }
+.ui3d .dash-top { display: none; }
+.ui3d .dash-qr { box-shadow: var(--u-shadow-2); border-radius: 1rem; padding: 10px; transform: perspective(700px) rotateY(-6deg) rotateX(3deg); transition: transform 0.4s ease; }
+.ui3d .dash-qr:hover { transform: perspective(700px) rotateY(0) rotateX(0); }
+.ui3d .dash-photo-img { box-shadow: var(--u-shadow-2), 0 0 0 4px var(--u-surface); border: 0; }
+.ui3d .dash-themes label { background: var(--u-surface); border-radius: 0.8rem; box-shadow: var(--u-shadow-1); }
+.ui3d .dash-actions { background: color-mix(in srgb, var(--u-solid) 92%, transparent); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border: 1px solid var(--border); border-radius: 1.1rem; padding: 0.75rem; box-shadow: var(--u-shadow-3); bottom: 6.2rem; z-index: 5; }
+.ui3d .dash-lead { background: var(--u-surface); border: 1px solid var(--border); border-radius: 1rem; box-shadow: var(--u-shadow-1); padding: 0.9rem; margin-top: 0.75rem; }
+.ui3d .lead-tab { background: var(--u-surface); box-shadow: var(--u-shadow-1); border-radius: 999px; }
+.ui3d .lead-tab[aria-current='page'] { background: var(--u-btn); color: var(--u-btn-text); box-shadow: var(--u-btn-shadow); border-color: transparent; }
+.ui3d .lead-badge-new { background: var(--u-btn); color: var(--u-btn-text); border-color: transparent; }
+.ui3d .check-bar { height: 0.8rem; border-radius: 99px; appearance: none; -webkit-appearance: none; border: 0; background: var(--u-surface); box-shadow: var(--u-field); overflow: hidden; }
+.ui3d .check-bar::-webkit-progress-bar { background: transparent; }
+.ui3d .check-bar::-webkit-progress-value { background: linear-gradient(90deg, var(--accent), var(--u-accent-2)); border-radius: 99px; box-shadow: 0 0 12px color-mix(in srgb, var(--accent) 55%, transparent); }
+.ui3d .check-bar::-moz-progress-bar { background: linear-gradient(90deg, var(--accent), var(--u-accent-2)); border-radius: 99px; }
+.ui3d .check-done { background: var(--notice-bg); }
+@media (min-width: 64rem) { .ui3d .dash-actions { bottom: 1rem; } }
+
+/* ---------- admin ---------- */
+.ui3d .adm { max-width: none; margin: 0; padding: 0; }
+.ui3d .adm-top, .ui3d .adm-nav { display: none; }
+.ui3d .adm h1 { margin: 0.4rem 0 1rem; }
+.ui3d .adm-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr)); gap: 0.9rem; }
+.ui3d .adm-stat { padding: 1.1rem 1.2rem; }
+.ui3d .adm-stat strong { font-size: 2.1rem; background: linear-gradient(135deg, var(--accent), var(--u-accent-2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.ui3d .adm-bar { background: var(--u-surface); box-shadow: var(--u-field); border: 0; height: 0.85rem; }
+.ui3d .adm-fill { background: linear-gradient(90deg, var(--accent), var(--u-accent-2)); box-shadow: 0 0 12px color-mix(in srgb, var(--accent) 60%, transparent); }
+.ui3d .adm-scroll { border: 1px solid var(--border); border-radius: 1rem; background: var(--u-surface); box-shadow: var(--u-shadow-2), inset 0 1px 0 var(--u-edge); }
+.ui3d .adm-table th { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+.ui3d .adm-table tbody tr { transition: background 0.15s ease; }
+.ui3d .adm-table tbody tr:hover { background: var(--notice-bg); }
+.ui3d .adm-table th, .ui3d .adm-table td { padding: 0.75rem 0.8rem; }
+
+/* ---------- login, contact, privacy ---------- */
+.ui3d .page-wrap { min-height: 100dvh; display: flex; align-items: flex-start; justify-content: center; padding: 1.2rem 1rem 3rem; }
+.ui3d .page-wrap .page-card { width: min(100%, 36rem); max-width: 36rem; margin: 0; padding: 1.4rem; box-shadow: var(--u-shadow-3), inset 0 1px 0 var(--u-edge); }
+.ui3d .login-wrap { align-items: center; perspective: 1400px; }
+.ui3d .page-wrap .login-card { width: min(100%, 26rem); max-width: 26rem; padding: 1.7rem 1.5rem; animation: u-rise 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+.ui3d .login-card .logo-chip { margin-bottom: 0.9rem; }
+.ui3d .login-card h1 { margin-top: 0.2rem; }
+.ui3d .login-card .stack { display: flex; flex-direction: column; gap: 0.7rem; }
+.ui3d .login-card button[type='submit'] { margin-top: 0.4rem; width: 100%; }
+.ui3d .login-back { display: inline-block; margin-top: 1rem; font-size: 0.92rem; }
+.ui3d .login-orb { position: absolute; border-radius: 50%; filter: blur(2px); pointer-events: none; z-index: -1; animation: u-float 9s ease-in-out infinite; }
+.ui3d .login-orb.a { width: 11rem; height: 11rem; top: 12%; left: 8%; background: radial-gradient(circle at 30% 30%, #a5b4ff, #5b6cff 60%, #3a2fd0); box-shadow: 0 30px 60px -20px rgba(70, 70, 230, 0.6); opacity: 0.9; }
+.ui3d .login-orb.b { width: 6rem; height: 6rem; bottom: 14%; right: 10%; background: radial-gradient(circle at 30% 30%, #ffd1f0, #ff6fb5 60%, #c2308a); box-shadow: 0 24px 50px -16px rgba(220, 60, 150, 0.6); animation-delay: -4s; }
+@media (max-width: 40rem) { .ui3d .login-orb.a { width: 7rem; height: 7rem; top: 4%; left: -1.5rem; } .ui3d .login-orb.b { width: 4rem; height: 4rem; bottom: 6%; right: -0.8rem; } }
+
+@keyframes u-rise { from { opacity: 0; transform: translateY(24px) rotateX(10deg) scale(0.98); } to { opacity: 1; transform: none; } }
+@keyframes u-float { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-16px) rotate(4deg); } }
+
+/* ---------- hover lift (only where a mouse exists) ---------- */
+@media (hover: hover) and (pointer: fine) {
+  .ui3d .dash-section:hover, .ui3d .adm-box:hover { transform: translateY(-2px); box-shadow: var(--u-shadow-3), inset 0 1px 0 var(--u-edge); }
+  .ui3d a.adm-stat:hover { transform: perspective(800px) translateY(-4px) rotateX(3deg) rotateY(-3deg); box-shadow: var(--u-shadow-3), inset 0 1px 0 var(--u-edge); }
+  .ui3d button:hover:not(:disabled), .ui3d .button:hover { filter: brightness(1.06); transform: translateY(-1px); }
+  .ui3d button:active:not(:disabled), .ui3d .button:active { transform: translateY(2px); filter: none; }
+  .ui3d .home-tile:hover { transform: perspective(900px) translateY(-6px) rotateX(4deg); box-shadow: var(--u-shadow-3), inset 0 1px 0 var(--u-edge); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ui3d *, .ui3d *::before, .ui3d *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}

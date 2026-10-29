@@ -1,0 +1,24 @@
+/* "Send me a message" on the public card. Uses the card theme colours (--pc-*). */
+.pc-lead { margin-top: 18px; text-align: left; }
+.pc-lead-open { width: 100%; cursor: pointer; font: inherit; font-weight: 600; }
+.pc-lead form { display: flex; flex-direction: column; gap: 12px; }
+.pc-lead label { display: block; font-weight: 600; margin-bottom: 4px; font-size: 0.95rem; }
+.pc-lead input, .pc-lead textarea {
+  width: 100%; padding: 10px 12px; font-size: 1rem; font-family: inherit; color: var(--pc-ink);
+  background: transparent; border: 1px solid var(--pc-line); border-radius: 10px;
+}
+.pc-lead textarea { resize: vertical; }
+.pc-lead-consent { display: flex; gap: 8px; align-items: flex-start; }
+.pc-lead-consent input { width: 1.2rem; height: 1.2rem; margin-top: 0.15rem; flex: none; }
+.pc-lead-consent label { font-weight: 400; margin: 0; }
+.pc-lead a { color: var(--pc-acc); }
+.pc-page[data-theme='teal'] .pc-lead a { color: #0b6e62; }
+.pc-lead .pc-hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.pc-lead button[type='submit'] {
+  min-height: 48px; border-radius: 12px; font-weight: 600; font-size: 1rem; cursor: pointer;
+  background: var(--pc-acc); color: var(--pc-acc-ink); border: 1px solid var(--pc-acc);
+}
+.pc-lead button:disabled { opacity: 0.6; cursor: default; }
+.pc-lead-error { color: #b3261e; margin: 4px 0 0; font-size: 0.9rem; }
+.pc-page[data-theme='dark'] .pc-lead-error { color: #ff9a90; }
+.pc-lead input:focus-visible, .pc-lead textarea:focus-visible, .pc-lead button:focus-visible { outline: 3px solid var(--pc-acc); outline-offset: 2px; }

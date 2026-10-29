@@ -1,0 +1,61 @@
+/* Admin panel. Uses the colours from globals.css, so light and dark work automatically. */
+.adm { max-width: 64rem; margin: 0 auto; padding: 1rem 1rem 3rem; }
+.adm h1 { margin: 1rem 0 0.5rem; }
+.adm h2 { margin: 0 0 0.75rem; font-size: 1.15rem; }
+.adm-top { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+.adm-logo { width: 120px; height: auto; }
+.adm-user { display: flex; align-items: center; gap: 0.75rem; }
+.adm-nav { display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; padding: 0.75rem 0; margin-top: 0.75rem; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.adm-nav a { font-weight: 600; }
+
+.adm-box { border: 1px solid var(--border); border-radius: 0.75rem; padding: 1rem; margin-top: 1rem; }
+.adm-row { display: flex; flex-wrap: wrap; gap: 0.5rem 0.75rem; align-items: center; }
+.adm-between { justify-content: space-between; }
+.adm-grid { display: grid; gap: 0.9rem; }
+@media (min-width: 40rem) { .adm-grid { grid-template-columns: 1fr 1fr; } }
+.adm label { display: block; font-weight: 600; margin-bottom: 0.25rem; }
+.adm-hint { margin: 0.25rem 0 0; font-size: 0.9rem; }
+
+.adm textarea, .adm select {
+  width: 100%; padding: 0.75rem; font-size: 1rem; font-family: inherit; color: inherit;
+  background: transparent; border: 1px solid var(--border); border-radius: 0.5rem;
+}
+.adm select option { color: #16181d; }
+.adm input:focus-visible, .adm textarea:focus-visible, .adm select:focus-visible, .adm button:focus-visible, .adm a:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+button.secondary, .button.secondary { background: transparent; color: var(--text); border: 1px solid var(--border); }
+
+.adm-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr)); gap: 0.75rem; }
+.adm-stat { display: flex; flex-direction: column; border: 1px solid var(--border); border-radius: 0.75rem; padding: 1rem; color: inherit; text-decoration: none; }
+.adm-stat strong { font-size: 2rem; line-height: 1.1; }
+.adm-stat span { color: var(--muted); }
+
+.adm-meter { margin: 0 0 1rem; }
+.adm-meter-label { display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-bottom: 0.25rem; }
+.adm-bar { height: 0.75rem; background: var(--notice-bg); border: 1px solid var(--border); border-radius: 99px; overflow: hidden; }
+.adm-fill { height: 100%; background: var(--accent); }
+.adm-warn { background: #c2410c; }
+
+.adm-scroll { overflow-x: auto; }
+.adm-table { width: 100%; border-collapse: collapse; }
+.adm-table th, .adm-table td { text-align: left; padding: 0.6rem 0.5rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+
+.adm-badge { display: inline-block; padding: 0.1rem 0.6rem; border-radius: 99px; font-size: 0.85rem; border: 1px solid var(--border); }
+.adm-new, .adm-off { border-color: #c2410c; }
+.adm-card_created, .adm-on { border-color: #15803d; }
+
+.adm-error { color: #b3261e; margin: 0.25rem 0 0; font-size: 0.9rem; }
+.adm-error-box { color: #b3261e; }
+@media (prefers-color-scheme: dark) { .adm-error, .adm-error-box { color: #ff9a90; } }
+.adm-pre { overflow-x: auto; padding: 0.75rem; background: var(--notice-bg); border-radius: 0.5rem; font-size: 0.9rem; }
+
+/* Milestone 19: search box, page links, danger box, setup check */
+.adm-search { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin: 0.75rem 0; }
+.adm-search input { max-width: 22rem; }
+.adm-pager { justify-content: center; margin: 1rem 0; }
+.adm-danger { border-color: #b3261e; }
+.adm-danger-btn { background: #b3261e; color: #fff; }
+.adm-ok { color: #15803d; }
+.adm-bad { color: #b3261e; }
+@media (prefers-color-scheme: dark) { .adm-ok { color: #6ee7a0; } .adm-bad { color: #ff9a90; } }
+.adm-checks { list-style: none; padding: 0; margin: 0; }
+.adm-checks li { padding: 0.4rem 0; border-bottom: 1px solid rgba(128, 128, 128, 0.3); }

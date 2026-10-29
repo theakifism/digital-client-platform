@@ -1,0 +1,49 @@
+# Every Sunday night (about 2 AM Monday in India) this saves the database as an ENCRYPTED file.
+# The file is kept for 90 days under Actions -> this workflow run -> Artifacts.
+# Needs two GitHub secrets:
+#   SUPABASE_DB_URL    the "Session pooler" connection string from Supabase -> Connect (with your database password filled in)
+#   BACKUP_PASSPHRASE  a long secret phrase you choose. Keep a copy in your company password manager. Without it a backup cannot be opened.
+# Photos are not in this file: they have their own weekly job, photo-backup.yml. See docs/BACKUP-AND-RESTORE.md.
+name: Weekly database backup
+
+on:
+  schedule:
+    - cron: '23 20 * * 0'
+  workflow_dispatch:
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install the PostgreSQL 17 tools
+        run: |
+          set -e
+          sudo apt-get update
+          sudo apt-get install -y curl ca-certificates
+          sudo install -d /usr/share/postgresql-common/pgdg
+          sudo curl -fsSL -o /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc https://www.postgresql.org/media/keys/ACCC4CF8.asc
+          echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt $(. /etc/os-release && echo $VERSION_CODENAME)-pgdg main" | sudo tee /etc/apt/sources.list.d/pgdg.list
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client-17
+
+      - name: Dump and encrypt the database
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+          BACKUP_PASSPHRASE: ${{ secrets.BACKUP_PASSPHRASE }}
+        run: |
+          set -euo pipefail
+          if [ -z "$SUPABASE_DB_URL" ] || [ -z "$BACKUP_PASSPHRASE" ]; then echo "A secret is missing (SUPABASE_DB_URL or BACKUP_PASSPHRASE)."; exit 1; fi
+          STAMP=$(date -u +%Y-%m-%d)
+          /usr/lib/postgresql/17/bin/pg_dump "$SUPABASE_DB_URL" --format=custom --no-owner --no-privileges --schema=public --schema=auth --file="backup-$STAMP.dump"
+          /usr/lib/postgresql/17/bin/pg_restore --list "backup-$STAMP.dump" > /dev/null   # proves the file can be read
+          openssl enc -aes-256-cbc -pbkdf2 -salt -in "backup-$STAMP.dump" -out "backup-$STAMP.dump.enc" -pass env:BACKUP_PASSPHRASE
+          rm "backup-$STAMP.dump"
+          ls -l backup-*.enc
+
+      - name: Keep the encrypted file for 90 days
+        uses: actions/upload-artifact@v4
+        with:
+          name: database-backup
+          path: backup-*.dump.enc
+          retention-days: 90
+          if-no-files-found: error

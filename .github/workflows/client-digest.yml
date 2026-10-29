@@ -1,0 +1,46 @@
+# Every Monday (about 9:00 AM India time) asks the website to send the weekly numbers e-mail to the clients who switched it on.
+# It works in small batches of 10 because the free host stops long requests. Needs the GitHub secrets SITE_URL and CRON_SECRET.
+# A RED run means an e-mail could not be sent (check the Resend settings) or the site could not be reached.
+# If you run it again after a red run, clients in batches that already worked get the e-mail a second time.
+name: Client weekly e-mail
+
+on:
+  schedule:
+    - cron: '30 3 * * 1'
+  workflow_dispatch:
+    inputs:
+      force:
+        description: 'Send now, even if today is not Monday'
+        type: boolean
+        default: false
+      dry:
+        description: 'Only count the clients, send nothing'
+        type: boolean
+        default: false
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send the batches
+        env:
+          SITE_URL: ${{ secrets.SITE_URL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+          FORCE: ${{ inputs.force }}
+          DRY: ${{ inputs.dry }}
+        run: |
+          set -e
+          if [ -z "$SITE_URL" ]; then echo "The SITE_URL secret is missing."; exit 1; fi
+          if [ -z "$CRON_SECRET" ]; then echo "The CRON_SECRET secret is missing."; exit 1; fi
+          extra=""
+          if [ "$FORCE" = "true" ]; then extra="$extra&force=1"; fi
+          if [ "$DRY" = "true" ]; then extra="$extra&dry=1"; fi
+          offset=0
+          for i in $(seq 1 100); do
+            body=$(curl --fail-with-body --silent --show-error --max-time 60 -X POST \
+              -H "Authorization: Bearer $CRON_SECRET" "$SITE_URL/api/cron/client-digest?offset=$offset$extra")
+            echo "$body"
+            next=$(echo "$body" | sed -n 's/.*"next_offset":\([0-9]*\).*/\1/p')
+            if [ -z "$next" ]; then break; fi
+            offset=$next
+          done

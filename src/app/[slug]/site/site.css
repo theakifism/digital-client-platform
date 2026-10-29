@@ -1,0 +1,43 @@
+/* Small website. Colours come from the card theme (--pc-* in card.css). */
+.site { width: min(100%, 720px); display: flex; flex-direction: column; gap: 16px; }
+.site-panel { background: var(--pc-card); color: var(--pc-ink); border: 1px solid var(--pc-line); border-radius: 18px; padding: 20px; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08); }
+.site-panel h2 { margin: 0 0 12px; font-size: 1.3rem; }
+.site-text { margin: 0 0 10px; line-height: 1.6; white-space: pre-wrap; color: var(--pc-ink); }
+
+.site-head { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 16px; }
+.site-photo { width: 72px; height: 72px; border-radius: 50%; object-fit: cover; border: 3px solid var(--pc-line); flex: none; }
+.site-initial { display: flex; align-items: center; justify-content: center; font-size: 30px; font-weight: 700; background: var(--pc-acc); color: var(--pc-acc-ink); border-color: var(--pc-acc); }
+.site-head-text { flex: 1 1 14rem; min-width: 0; }
+.site-head-text h1 { margin: 0; font-size: 1.5rem; line-height: 1.2; }
+.site-head-text p { margin: 2px 0 0; color: var(--pc-mute); }
+.site-head-actions, .site-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.site-head-actions .pc-btn, .site-actions .pc-btn { flex: 1 1 8rem; }
+.site-actions { margin-top: 12px; }
+
+.site-list { list-style: none; margin: 0; padding: 0; }
+.site-list li { padding: 12px 0; border-top: 1px solid var(--pc-line); }
+.site-list li:first-child { border-top: 0; padding-top: 0; }
+.site-row { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
+.site-price { font-weight: 700; color: var(--pc-acc); white-space: nowrap; }
+.site-panel .site-list p { margin: 4px 0 0; }
+.pc-page[data-theme='teal'] .site-price { color: #0b6e62; }
+
+.site-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+.site-gallery figure { margin: 0; }
+.site-gallery img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 12px; display: block; background: var(--pc-line); }
+.site-gallery figcaption { margin-top: 4px; font-size: 0.85rem; color: var(--pc-mute); }
+
+.site-quote { margin: 0 0 14px; padding: 4px 0 4px 14px; border-left: 4px solid var(--pc-acc); }
+.site-quote p { margin: 0 0 6px; line-height: 1.55; font-style: italic; }
+.site-quote footer { color: var(--pc-mute); font-size: 0.9rem; }
+
+.site-faq { border-top: 1px solid var(--pc-line); padding: 10px 0; }
+.site-faq:first-of-type { border-top: 0; }
+.site-faq summary { cursor: pointer; font-weight: 600; }
+.site-faq p { margin: 8px 0 0; }
+
+.site-foot { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 8px 0 16px; font-size: 0.85rem; color: var(--pc-mute); }
+.pc-page[data-theme='teal'] .site-foot { color: #e6f6f3; }
+.pc-page .site-foot .pc-brand { width: 150px; height: auto; background: #ffffff; padding: 6px 10px; border-radius: 8px; box-sizing: content-box; }
+.site a:focus-visible, .site summary:focus-visible { outline: 3px solid var(--pc-acc); outline-offset: 2px; }
+.pc-page[data-theme='teal'] .site-foot a:focus-visible { outline-color: #ffffff; }

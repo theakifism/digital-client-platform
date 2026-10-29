@@ -1,0 +1,22 @@
+{
+  // Settings for hosting this site on Cloudflare Workers.
+  // Only change "name" if you want a different address; the live address is https://<name>.<your-account>.workers.dev
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "orian-cards",
+  "main": ".open-next/worker.js",
+  "upload_source_maps": true,
+  "compatibility_date": "2026-10-28",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+  "observability": {
+    "enabled": true
+  },
+  "vars": {
+    // Cloudflare tells us the visitor's real address in this header (visitors cannot fake it).
+    // The rate limits use it. Netlify's header is the default in the code, so this line is needed on Cloudflare.
+    "CLIENT_IP_HEADER": "cf-connecting-ip"
+  }
+}

@@ -1,0 +1,9 @@
+/* "Get your card ready" (Milestone 16) */
+.check-top { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; }
+.check-bar { flex: 1; height: 0.6rem; accent-color: var(--accent); }
+.check-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.6rem; }
+.check-item { display: flex; gap: 0.6rem; align-items: flex-start; }
+.check-item.is-done { color: var(--muted); }
+.check-mark { flex: none; width: 1.4rem; text-align: center; font-weight: 700; color: var(--accent); }
+.check-done { background: var(--notice-bg); }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }

@@ -1,0 +1,56 @@
+/* Home page (Milestone 19). Scoped under .ui3d, see ui3d.css for the shared colours and depth tokens. */
+.ui3d .home { max-width: 66rem; margin: 0 auto; padding: 1rem 1.1rem 3rem; }
+.ui3d .home section { margin-top: 3.2rem; }
+.ui3d .home-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+.ui3d .home-head-login { min-height: 2.5rem; padding: 0.45rem 1rem; }
+
+.ui3d .home-hero { display: grid; gap: 2.2rem; align-items: center; margin-top: 2.2rem; }
+.ui3d .home h1 { font-size: clamp(2.1rem, 7vw, 3.6rem); line-height: 1.05; margin: 0 0 1rem; letter-spacing: -0.035em; }
+.ui3d .home-grad { background: linear-gradient(120deg, var(--accent), var(--u-accent-2) 55%, #e35fb0); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.ui3d .home-lead { font-size: 1.12rem; color: var(--muted); margin: 0 0 1.6rem; max-width: 34rem; }
+.ui3d .home-buttons { display: flex; flex-wrap: wrap; align-items: center; gap: 0.8rem; }
+.ui3d .home-sample { font-weight: 600; padding: 0.5rem 0.2rem; }
+.ui3d .home h2 { font-size: 1.5rem; margin: 0 0 1.1rem; }
+
+/* the 3D stack of cards */
+.ui3d .home-visual { perspective: 1300px; display: flex; justify-content: center; padding: 1.4rem 0 2rem; }
+.ui3d .stage { position: relative; width: min(100%, 19rem); height: 24rem; transform-style: preserve-3d; transform: rotateX(8deg) rotateY(-18deg) rotateZ(2deg); animation: u-hover 8s ease-in-out infinite; transition: transform 0.6s ease; }
+.ui3d .home-visual:hover .stage { transform: rotateX(4deg) rotateY(-8deg) rotateZ(0deg); }
+.ui3d .layer { position: absolute; inset: 0; border-radius: 1.8rem; border: 1px solid var(--u-edge); }
+.ui3d .l3 { transform: translateZ(-70px) translate(26px, 26px); background: linear-gradient(160deg, #e35fb0, #8a5cff); opacity: 0.55; box-shadow: 0 40px 70px -20px rgba(140, 70, 200, 0.55); }
+.ui3d .l2 { transform: translateZ(-35px) translate(13px, 13px); background: linear-gradient(160deg, #6dd5ff, #5b6cff); opacity: 0.75; box-shadow: 0 30px 60px -20px rgba(70, 110, 255, 0.5); }
+.ui3d .l1 { padding: 1.4rem; background: var(--u-solid); box-shadow: var(--u-shadow-3), inset 0 1px 0 var(--u-edge); display: flex; flex-direction: column; gap: 1.3rem; background: var(--u-solid); }
+.ui3d .mini-top { display: flex; align-items: center; gap: 0.9rem; }
+.ui3d .mini-avatar { width: 4.2rem; height: 4.2rem; border-radius: 50%; background: radial-gradient(circle at 30% 30%, #b9c4ff, #5b6cff 60%, #3a2fd0); box-shadow: var(--u-shadow-2), 0 0 0 4px var(--u-surface); flex: none; }
+.ui3d .mini-lines { display: flex; flex-direction: column; gap: 0.5rem; flex: 1; }
+.ui3d .mini-lines i { display: block; height: 0.75rem; border-radius: 99px; background: var(--border); }
+.ui3d .mini-lines i:first-child { width: 80%; height: 0.95rem; background: color-mix(in srgb, var(--text) 22%, transparent); }
+.ui3d .mini-lines i:last-child { width: 55%; }
+.ui3d .mini-actions { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.7rem; }
+.ui3d .mini-actions span { height: 3.3rem; border-radius: 1rem; background: var(--u-surface); border: 1px solid var(--border); box-shadow: var(--u-shadow-1), inset 0 1px 0 var(--u-edge), inset 0 -3px 0 rgba(16, 24, 48, 0.06); }
+.ui3d .mini-actions span:first-child { background: var(--u-btn); box-shadow: var(--u-btn-shadow); border: 0; }
+.ui3d .mini-save { margin-top: auto; height: 3rem; border-radius: 1rem; background: var(--u-btn); box-shadow: var(--u-btn-shadow); }
+.ui3d .chip { position: absolute; padding: 0.5rem 0.9rem; font-size: 0.85rem; font-weight: 650; color: var(--text); background: var(--u-glass); border: 1px solid var(--u-edge); border-radius: 999px; box-shadow: var(--u-shadow-3); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); white-space: nowrap; }
+.ui3d .chip-a { top: 2.2rem; right: -2.4rem; transform: translateZ(70px); animation: u-float 7s ease-in-out infinite; }
+.ui3d .chip-b { bottom: 3rem; left: -2.6rem; transform: translateZ(90px); animation: u-float 8s ease-in-out -3s infinite; }
+@keyframes u-hover { 0%, 100% { translate: 0 0; } 50% { translate: 0 -12px; } }
+
+/* feature tiles and steps */
+.ui3d .home-grid { list-style: none; margin: 0; padding: 0; display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(14.5rem, 1fr)); }
+.ui3d .home-tile { margin: 0; display: flex; flex-direction: column; gap: 0.9rem; padding: 1.3rem; }
+.ui3d .home-tile p, .ui3d .home-steps p { margin: 0; }
+.ui3d .tile-icon { width: 3.1rem; height: 3.1rem; border-radius: 1rem; display: grid; place-items: center; color: var(--u-btn-text); background: var(--u-btn); box-shadow: var(--u-btn-shadow); }
+.ui3d .tile-icon svg { width: 1.5rem; height: 1.5rem; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.ui3d .home-steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 1rem; counter-reset: s; }
+.ui3d .home-steps li { margin: 0; display: flex; align-items: center; gap: 1rem; padding: 1.1rem 1.3rem; }
+.ui3d .step-no { flex: none; width: 2.6rem; height: 2.6rem; display: grid; place-items: center; font-weight: 800; font-size: 1.15rem; color: var(--u-btn-text); background: var(--u-btn); border-radius: 50%; box-shadow: var(--u-btn-shadow); }
+
+.ui3d .home-footer { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-top: 3.5rem; padding-top: 1.2rem; border-top: 1px solid var(--border); }
+
+@media (min-width: 52rem) {
+  .ui3d .home { padding-top: 1.4rem; }
+  .ui3d .home-hero { grid-template-columns: 1.1fr 0.9fr; gap: 3rem; margin-top: 3.2rem; }
+  .ui3d .home-steps { grid-template-columns: repeat(3, 1fr); }
+  .ui3d .home-steps li { flex-direction: column; align-items: flex-start; }
+}
+@media (max-width: 30rem) { .ui3d .chip-a { right: -0.6rem; } .ui3d .chip-b { left: -0.6rem; } }
