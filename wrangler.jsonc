@@ -2,7 +2,7 @@
   // Settings for hosting this site on Cloudflare Workers.
   // Only change "name" if you want a different address; the live address is https://<name>.<your-account>.workers.dev
   "$schema": "./node_modules/wrangler/config-schema.json",
-  "name": "orian-cards",
+  "name": "digital-client-platform",
   "main": ".open-next/worker.js",
   "upload_source_maps": true,
   "compatibility_date": "2026-10-28",
