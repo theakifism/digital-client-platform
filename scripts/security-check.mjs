@@ -301,6 +301,18 @@ await check('a client cannot move their own card into an organization', async ()
 await check('a client cannot create an organization', async () => gone(await A.c.from('organizations').insert({ name: 'sec test', slug: 'sec-test-' + rand }).select('id')))
 await check('a visitor cannot see which organization a card belongs to', async () => { const r = await anon.from('cards').select('organization_id').eq('id', cardA.id); return !!r.error || (r.data ?? []).every((x) => x.organization_id === undefined) })
 
+console.log('\n--- Milestone 22 card templates (these FAIL until migration 018 is run; test client A must NOT belong to an organization) ---')
+await check('anyone can read the template of a card', async () => !(await anon.from('cards').select('template').eq('id', cardA.id)).error)
+await check('a client can change the template of their own card', async () => {
+  const before = await A.c.from('cards').select('template').eq('id', cardA.id).single()
+  const r = await A.c.from('cards').update({ template: 'wave' }).eq('id', cardA.id).select('template')
+  const ok = !r.error && r.data?.[0]?.template === 'wave'
+  await A.c.from('cards').update({ template: before.data?.template ?? null }).eq('id', cardA.id)
+  return ok
+})
+await check('a client cannot save a template name with strange characters', async () => !!(await A.c.from('cards').update({ template: 'Bad Name!' }).eq('id', cardA.id).select('id')).error)
+await check('a visitor cannot change a template', async () => gone(await anon.from('cards').update({ template: 'neon' }).eq('id', cardA.id).select('id')))
+
 console.log(`\n${passed} passed, ${failed} FAILED, ${warnings} warning(s).`)
 if (failed > 0) {
   console.log('\nA FAILED line means a real person could do something they must not. Do NOT go live. Paste this whole output into the chat for help.')

@@ -25,13 +25,30 @@ export default async function DashboardPage({ searchParams }: Props) {
   const { data: profile } = await supabase.from('profiles').select('username, full_name').eq('id', user.id).single()
 
   // Row Level Security means this list can only ever contain THIS client's cards.
-  const { data: cards } = await supabase
+  type DashCard = {
+    id: string; slug: string; is_active: boolean; name: string | null; designation: string | null; company: string | null
+    bio: string | null; phone: string | null; whatsapp: string | null; email: string | null; address: string | null
+    map_url: string | null; website: string | null; social_links: unknown; theme: string; photo_url: string | null
+    template?: string | null; organization_id?: string | null
+  }
+  const withDesign = await supabase
     .from('cards')
     .select(
-      'id, slug, is_active, name, designation, company, bio, phone, whatsapp, email, address, map_url, website, social_links, theme, photo_url'
+      'id, slug, is_active, name, designation, company, bio, phone, whatsapp, email, address, map_url, website, social_links, theme, photo_url, template, organization_id'
     )
     .eq('owner_id', user.id)
     .order('created_at', { ascending: true })
+  let cards = withDesign.data as unknown as DashCard[] | null
+  if (withDesign.error) {
+    // Migrations 017 or 018 are not run yet: open the dashboard without the design choice instead of failing.
+    console.error('dashboard cards (with design) failed:', withDesign.error.message)
+    const plain = await supabase
+      .from('cards')
+      .select('id, slug, is_active, name, designation, company, bio, phone, whatsapp, email, address, map_url, website, social_links, theme, photo_url')
+      .eq('owner_id', user.id)
+      .order('created_at', { ascending: true })
+    cards = plain.data as unknown as DashCard[] | null
+  }
 
   const { card: wanted, leads: leadsFilter } = await searchParams
   const list = cards ?? []
@@ -121,6 +138,8 @@ export default async function DashboardPage({ searchParams }: Props) {
               website: selected.website,
               social_links: selected.social_links as EditableCard['social_links'],
               theme: selected.theme,
+              template: selected.template ?? null,
+              locked: Boolean(selected.organization_id),
               photo_url: selected.photo_url,
             }}
           />

@@ -20,7 +20,7 @@ export default async function AdminCardPage({ params }: Props) {
 
   const { data } = await supabase
     .from('cards')
-    .select('id, slug, is_active, owner_id, name, designation, company, bio, phone, whatsapp, email, address, map_url, website, social_links, theme, owner:profiles(username)')
+    .select('id, slug, is_active, owner_id, name, designation, company, bio, phone, whatsapp, email, address, map_url, website, social_links, theme, template, organization_id, owner:profiles(username)')
     .eq('id', id)
     .maybeSingle()
   if (!data) notFound()

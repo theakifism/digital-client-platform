@@ -1,6 +1,8 @@
 import Link from 'next/link'
 import { requireOrgAdmin } from '@/lib/org'
-import { toggleStaffActive } from '../actions'
+import { toggleStaffActive, setStaffDesign } from '../actions'
+import { TEMPLATES, resolveTemplate } from '@/lib/card-templates'
+import { THEMES } from '@/app/dashboard/themes'
 import ConfirmButton from '../../admin/confirm-button'
 import Pager from '../../admin/pager'
 
@@ -10,6 +12,8 @@ type Row = {
   name: string | null
   designation: string | null
   is_active: boolean
+  template: string | null
+  theme: string
   owner: { username: string } | { username: string }[] | null
 }
 type CountRow = { card_id: string; total: number; new_count: number }
@@ -25,7 +29,7 @@ export default async function OrgStaffPage({ searchParams }: Props) {
 
   const { data, count } = await db
     .from('cards')
-    .select('id, slug, name, designation, is_active, owner:profiles(username)', { count: 'exact' })
+    .select('id, slug, name, designation, is_active, template, theme, owner:profiles(username)', { count: 'exact' })
     .eq('organization_id', org.id)
     .order('created_at', { ascending: false })
     .range(from, from + PAGE_SIZE - 1)
@@ -43,7 +47,7 @@ export default async function OrgStaffPage({ searchParams }: Props) {
       <div className="adm-scroll">
         <table className="adm-table">
           <thead>
-            <tr><th>Card</th><th>Login username</th><th>Messages</th><th>Still New</th><th>Status</th><th>Actions</th></tr>
+            <tr><th>Card</th><th>Login username</th><th>Messages</th><th>Still New</th><th>Status</th><th>Design</th><th>Actions</th></tr>
           </thead>
           <tbody>
             {cards.map((c) => {
@@ -59,6 +63,18 @@ export default async function OrgStaffPage({ searchParams }: Props) {
                   <td>{Number(n?.total ?? 0)}</td>
                   <td>{Number(n?.new_count ?? 0)}</td>
                   <td><span className={`adm-badge ${c.is_active ? 'adm-on' : 'adm-off'}`}>{c.is_active ? 'On' : 'Off'}</span></td>
+                  <td>
+                    <form action={setStaffDesign} className="adm-row">
+                      <input type="hidden" name="card_id" value={c.id} />
+                      <select name="template" defaultValue={resolveTemplate(c.template)} aria-label={`Design for ${c.name ?? c.slug}`}>
+                        {TEMPLATES.map((t) => (<option key={t.id} value={t.id}>{t.label}</option>))}
+                      </select>
+                      <select name="theme" defaultValue={THEMES.some((t) => t.id === c.theme) ? c.theme : 'light'} aria-label={`Colours for ${c.name ?? c.slug}`}>
+                        {THEMES.map((t) => (<option key={t.id} value={t.id}>{t.label}</option>))}
+                      </select>
+                      <button type="submit" className="secondary">Save</button>
+                    </form>
+                  </td>
                   <td>
                     <form action={toggleStaffActive}>
                       <input type="hidden" name="card_id" value={c.id} />

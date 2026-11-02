@@ -5,6 +5,7 @@ import { startTransition, useActionState, useState } from 'react'
 import { createStaffAction } from '../../actions'
 import { initialCreateState } from '../../../admin/state'
 import { THEMES } from '@/app/dashboard/themes'
+import { TEMPLATES } from '@/lib/card-templates'
 
 export default function NewStaffForm({ siteUrl, orgName }: { siteUrl: string; orgName: string }) {
   const [state, action, pending] = useActionState(createStaffAction, initialCreateState)
@@ -87,11 +88,18 @@ export default function NewStaffForm({ siteUrl, orgName }: { siteUrl: string; or
           {err('email')}
         </div>
         <div>
-          <label htmlFor="theme">Theme</label>
+          <label htmlFor="template">Design</label>
+          <select id="template" name="template" defaultValue="wave">
+            {TEMPLATES.map((t) => (<option key={t.id} value={t.id}>{t.label}</option>))}
+          </select>
+          <p className="muted adm-hint">You can change it later in the staff list. Staff cannot change it themselves.</p>
+          {err('template')}
+        </div>
+        <div>
+          <label htmlFor="theme">Colours</label>
           <select id="theme" name="theme" defaultValue="orion">
             {THEMES.map((t) => (<option key={t.id} value={t.id}>{t.label}</option>))}
           </select>
-          <p className="muted adm-hint">Placeholder: card templates replace this later.</p>
           {err('theme')}
         </div>
       </div>

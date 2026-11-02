@@ -4,6 +4,7 @@ import { startTransition, useActionState } from 'react'
 import { adminSaveCard } from '../../actions'
 import { initialState } from '@/app/dashboard/state'
 import { THEMES } from '@/app/dashboard/themes'
+import { TEMPLATES, resolveTemplate } from '@/lib/card-templates'
 
 export type AdminEditableCard = {
   id: string
@@ -20,6 +21,8 @@ export type AdminEditableCard = {
   website: string | null
   social_links: Record<string, string> | null
   theme: string
+  template?: string | null
+  organization_id?: string | null
 }
 
 const SOCIALS: [string, string][] = [
@@ -49,7 +52,15 @@ export default function AdminCardForm({ card }: { card: AdminEditableCard }) {
         <div><label htmlFor="company">Business name</label><input id="company" name="company" defaultValue={v(card.company)} maxLength={80} />{err('company')}</div>
         <div><label htmlFor="designation">Role</label><input id="designation" name="designation" defaultValue={v(card.designation)} maxLength={80} />{err('designation')}</div>
         <div>
-          <label htmlFor="theme">Theme</label>
+          <label htmlFor="template">Design</label>
+          <select id="template" name="template" defaultValue={resolveTemplate(card.template)}>
+            {TEMPLATES.map((t) => (<option key={t.id} value={t.id}>{t.label}</option>))}
+          </select>
+          {card.organization_id && <p className="muted adm-hint">This card belongs to an organization. Only the organization administrator and you can change its design.</p>}
+          {err('template')}
+        </div>
+        <div>
+          <label htmlFor="theme">Colours</label>
           <select id="theme" name="theme" defaultValue={THEMES.some((t) => t.id === card.theme) ? card.theme : 'light'}>
             {THEMES.map((t) => (<option key={t.id} value={t.id}>{t.label}</option>))}
           </select>

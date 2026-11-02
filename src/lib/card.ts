@@ -18,6 +18,7 @@ export type PublicCard = {
   website: string | null
   social_links: Record<string, string> | null
   theme: string
+  template?: string | null
 }
 
 // cache(): the page and its metadata ask for the same card, but the database is asked only once per visit.
@@ -30,6 +31,16 @@ export const getPublicCard = cache(async (slug: string): Promise<PublicCard | nu
     { auth: { persistSession: false, autoRefreshToken: false } }
   )
 
+  const withTemplate = await supabase
+    .from('cards')
+    .select('slug, name, designation, company, bio, photo_url, phone, whatsapp, email, address, map_url, website, social_links, theme, template')
+    .eq('slug', slug)
+    .eq('is_active', true)
+    .maybeSingle()
+  if (!withTemplate.error) return (withTemplate.data as PublicCard | null) ?? null
+
+  // Migration 018 (the template column) has not been run yet: show the card in the Classic look instead of failing.
+  console.error('getPublicCard (with template) failed:', withTemplate.error.message)
   const { data, error } = await supabase
     .from('cards')
     .select('slug, name, designation, company, bio, photo_url, phone, whatsapp, email, address, map_url, website, social_links, theme')

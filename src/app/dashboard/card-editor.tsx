@@ -5,6 +5,7 @@ import { uploadPhoto } from './upload-photo'
 import { saveCard } from './actions'
 import { initialState } from './state'
 import { THEMES } from './themes'
+import { TEMPLATES, resolveTemplate } from '@/lib/card-templates'
 import { compressToSquareJpeg } from './image'
 import { formatKb } from '@/lib/image-shrink'
 
@@ -22,6 +23,8 @@ export type EditableCard = {
   website: string | null
   social_links: Record<string, string> | null
   theme: string
+  template?: string | null
+  locked?: boolean // true when the card belongs to an organization: the organization chooses the design
   photo_url: string | null
 }
 
@@ -39,6 +42,7 @@ export default function CardEditor({ card }: { card: EditableCard; ownerId: stri
   const [photoMsg, setPhotoMsg] = useState('')
   const [uploading, setUploading] = useState(false)
   const [theme, setTheme] = useState(THEMES.some((t) => t.id === card.theme) ? card.theme : 'light')
+  const [template, setTemplate] = useState<string>(resolveTemplate(card.template))
   const fileRef = useRef<HTMLInputElement>(null)
 
   const err = (key: string) =>
@@ -192,17 +196,39 @@ export default function CardEditor({ card }: { card: EditableCard; ownerId: stri
 
       <section className="dash-section">
         <h2>Card look</h2>
-        <fieldset className="dash-themes">
-          <legend className="muted">Choose a theme</legend>
-          {THEMES.map((t) => (
-            <label key={t.id}>
-              <input type="radio" name="theme" value={t.id} checked={theme === t.id} onChange={() => setTheme(t.id)} />
-              <span className="dash-dot" style={{ background: t.swatch }} />
-              {t.label}
-            </label>
-          ))}
-        </fieldset>
-        {err('theme')}
+        {card.locked ? (
+          <>
+            <p className="muted">The design and colours of your card are chosen by your organization.</p>
+            <input type="hidden" name="theme" value={theme} />
+            <input type="hidden" name="template" value={template} />
+          </>
+        ) : (
+          <>
+            <fieldset className="dash-templates">
+              <legend className="muted">Choose a design</legend>
+              {TEMPLATES.map((t) => (
+                <label key={t.id} className={template === t.id ? 'dash-tpl dash-tpl-on' : 'dash-tpl'}>
+                  <input type="radio" name="template" value={t.id} checked={template === t.id} onChange={() => setTemplate(t.id)} />
+                  <span className="dash-tpl-name">{t.label}</span>
+                  <span className="dash-tpl-text muted">{t.description}</span>
+                </label>
+              ))}
+            </fieldset>
+            {err('template')}
+            <fieldset className="dash-themes" style={{ marginTop: '1rem' }}>
+              <legend className="muted">Choose the colours</legend>
+              {THEMES.map((t) => (
+                <label key={t.id}>
+                  <input type="radio" name="theme" value={t.id} checked={theme === t.id} onChange={() => setTheme(t.id)} />
+                  <span className="dash-dot" style={{ background: t.swatch }} />
+                  {t.label}
+                </label>
+              ))}
+            </fieldset>
+            {err('theme')}
+            <p className="muted" style={{ marginTop: '0.75rem' }}>Save, then open your card to see the new look.</p>
+          </>
+        )}
       </section>
 
       <div className="dash-actions">

@@ -1,6 +1,7 @@
 // Checks and cleans everything a client typed. Runs on the SERVER, so it cannot be skipped.
 import { safeUrl, telHref, emailHref } from '@/lib/links'
 import { THEME_IDS } from './themes'
+import { TEMPLATE_IDS } from '@/lib/card-templates'
 
 export const SOCIAL_KEYS = ['instagram', 'facebook', 'linkedin', 'youtube', 'x'] as const
 
@@ -17,6 +18,7 @@ export type CardValues = {
   website: string | null
   social_links: Record<string, string>
   theme: string
+  template?: string
   photo_url: string | null
 }
 
@@ -82,6 +84,10 @@ export function validateCard(fd: FormData, photoPrefix: string) {
   const theme = clean(fd.get('theme'))
   if (!THEME_IDS.includes(theme)) errors.theme = 'Please choose one of the themes.'
 
+  // The template (layout) is optional: when the form does not send one, the card keeps the one it has.
+  const template = clean(fd.get('template'))
+  if (template && !TEMPLATE_IDS.includes(template)) errors.template = 'Please choose one of the designs.'
+
   const photo = clean(fd.get('photo_url'))
   if (photo && (photo.length > 500 || photoPrefix === '' || !photo.startsWith(photoPrefix))) {
     errors.photo = 'That photo is not valid. Please upload it again.'
@@ -104,5 +110,6 @@ export function validateCard(fd: FormData, photoPrefix: string) {
     theme,
     photo_url: photo || null,
   }
+  if (template) values.template = template
   return { values, errors }
 }
