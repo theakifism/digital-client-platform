@@ -172,6 +172,7 @@ async function CardLinkBox({ slug, active }: { slug: string; active: boolean }) 
       <p className="dash-link"><a href={`/${slug}`} target="_blank" rel="noopener noreferrer">{url.replace(/^https?:\/\//, '')}</a></p>
       <div className="dash-row">
         <a className="button" href={`/${slug}`} target="_blank" rel="noopener noreferrer">Open my card</a>
+        <Link className="button" href="#edit-card">Edit my card</Link>
         <CopyLink url={url} />
       </div>
       <div className="dash-qr" role="img" aria-label="QR code for your card" dangerouslySetInnerHTML={{ __html: qr }} style={{ marginTop: '1rem' }} />
