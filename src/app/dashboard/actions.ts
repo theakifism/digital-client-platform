@@ -28,12 +28,12 @@ export async function saveCard(_prev: SaveState, formData: FormData): Promise<Sa
 
   // Runs as the logged-in client, so Row Level Security only lets them change THEIR OWN card.
   // (The link, owner and on/off switch are protected by the database as well.)
-  // A card that belongs to an organization keeps the design (template and colour) the organization chose. The database enforces this too.
+  // A card that belongs to an organization keeps the colour palette the organization chose. The database enforces this too.
   const { data: current } = await supabase.from('cards').select('organization_id').eq('id', cardId).maybeSingle()
   const update: Record<string, unknown> = { ...values }
   if (current?.organization_id) {
     delete update.theme
-    delete update.template
+    delete update.accent_color
   }
 
   const { data, error } = await supabase.from('cards').update(update).eq('id', cardId).select('id').maybeSingle()

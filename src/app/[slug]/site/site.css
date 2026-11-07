@@ -18,10 +18,8 @@
 .site-list li { padding: 12px 0; border-top: 1px solid var(--pc-line); }
 .site-list li:first-child { border-top: 0; padding-top: 0; }
 .site-row { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
-.site-price { font-weight: 700; color: var(--pc-acc); white-space: nowrap; }
+.site-price { font-weight: 700; color: var(--pc-acc-text); white-space: nowrap; }
 .site-panel .site-list p { margin: 4px 0 0; }
-.pc-page[data-theme='teal'] .site-price { color: #0b6e62; }
-
 .site-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
 .site-gallery figure { margin: 0; }
 .site-gallery img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 12px; display: block; background: var(--pc-line); }
@@ -37,7 +35,7 @@
 .site-faq p { margin: 8px 0 0; }
 
 .site-foot { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 8px 0 16px; font-size: 0.85rem; color: var(--pc-mute); }
-.pc-page[data-theme='teal'] .site-foot { color: #e6f6f3; }
+.pc-page[data-theme='teal'] .site-foot { color: var(--pc-mute); }
 .pc-page .site-foot .pc-brand { width: 150px; height: auto; background: #ffffff; padding: 6px 10px; border-radius: 8px; box-sizing: content-box; }
 .site a:focus-visible, .site summary:focus-visible { outline: 3px solid var(--pc-acc); outline-offset: 2px; }
-.pc-page[data-theme='teal'] .site-foot a:focus-visible { outline-color: #ffffff; }
+.pc-page[data-theme='teal'] .site-foot a:focus-visible { outline-color: var(--pc-acc-text); }

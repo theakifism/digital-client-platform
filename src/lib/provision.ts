@@ -12,7 +12,7 @@ export type ProvisionInput = {
   phone?: string | null
   email?: string | null
   theme?: string
-  template?: string | null
+  accent_color?: string | null
   password?: string
   organizationId?: string | null // Milestone 21: set when the card belongs to an organization
 }
@@ -58,8 +58,8 @@ export async function provisionClient(input: ProvisionInput): Promise<ProvisionR
     phone: input.phone || null,
     email: input.email || null,
     theme: input.theme || 'orion',
+    ...(input.accent_color ? { accent_color: input.accent_color } : {}),
     organization_id: input.organizationId ?? null,
-    ...(input.template ? { template: input.template } : {}), // only sent when chosen, so card creation works before migration 018 too
   })
   if (cardError) {
     console.error('card insert failed:', cardError.message)

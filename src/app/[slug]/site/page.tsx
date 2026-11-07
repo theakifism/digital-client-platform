@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import type { CSSProperties } from 'react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getPublicCard, getSearchChoice, siteUrl } from '@/lib/card'
@@ -9,6 +10,7 @@ import {
 } from '@/lib/block-schema'
 import { BRAND } from '@/lib/brand'
 import { directionsHref, emailHref, safeUrl, telHref, whatsappHref } from '@/lib/links'
+import { accentTextColor, accentTextOnSurface, isHexAccent } from '@/lib/card-accent'
 import Tracker from '../tracker'
 import LeadForm from '../lead-form'
 import '../card.css'
@@ -46,6 +48,15 @@ export default async function SitePage({ params }: Props) {
   if (blocks.length === 0) notFound()
 
   const theme = THEMES.includes(card.theme) ? card.theme : 'light'
+  const storedAccent = card.accent_color ?? ''
+  const accentColor = isHexAccent(storedAccent) ? storedAccent : null
+  const siteStyle = accentColor
+    ? ({
+        '--pc-user-accent': accentColor,
+        '--pc-user-accent-ink': accentTextColor(accentColor),
+        '--pc-user-accent-text': accentTextOnSurface(accentColor, theme === 'dark'),
+      } as CSSProperties)
+    : undefined
   const photo = safeUrl(card.photo_url)
   const displayName = card.name || card.company || 'Website'
   const call = telHref(card.phone)
@@ -53,7 +64,7 @@ export default async function SitePage({ params }: Props) {
   const ext = { target: '_blank', rel: 'noopener noreferrer' } as const
 
   return (
-    <main className="pc-page" data-theme={theme}>
+    <main className="pc-page" data-theme={theme} style={siteStyle}>
       <Tracker slug={card.slug} viewType="site_view" />
       <div className="site">
         <header className="site-panel site-head">

@@ -4,7 +4,7 @@ import { startTransition, useActionState } from 'react'
 import { adminSaveCard } from '../../actions'
 import { initialState } from '@/app/dashboard/state'
 import { THEMES } from '@/app/dashboard/themes'
-import { TEMPLATES, resolveTemplate } from '@/lib/card-templates'
+import { DEFAULT_ACCENTS, isHexAccent } from '@/lib/card-accent'
 
 export type AdminEditableCard = {
   id: string
@@ -21,7 +21,7 @@ export type AdminEditableCard = {
   website: string | null
   social_links: Record<string, string> | null
   theme: string
-  template?: string | null
+  accent_color: string | null
   organization_id?: string | null
 }
 
@@ -37,6 +37,8 @@ export default function AdminCardForm({ card }: { card: AdminEditableCard }) {
   const [state, action, pending] = useActionState(adminSaveCard, initialState)
   const err = (k: string) => (state.errors[k] ? <p className="adm-error" role="alert">{state.errors[k]}</p> : null)
   const v = (x: string | null) => x ?? ''
+  const storedAccent = card.accent_color ?? ''
+  const initialAccent = isHexAccent(storedAccent) ? storedAccent : DEFAULT_ACCENTS[card.theme] ?? DEFAULT_ACCENTS.orion
 
   function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -52,19 +54,21 @@ export default function AdminCardForm({ card }: { card: AdminEditableCard }) {
         <div><label htmlFor="company">Business name</label><input id="company" name="company" defaultValue={v(card.company)} maxLength={80} />{err('company')}</div>
         <div><label htmlFor="designation">Role</label><input id="designation" name="designation" defaultValue={v(card.designation)} maxLength={80} />{err('designation')}</div>
         <div>
-          <label htmlFor="template">Design</label>
-          <select id="template" name="template" defaultValue={resolveTemplate(card.template)}>
-            {TEMPLATES.map((t) => (<option key={t.id} value={t.id}>{t.label}</option>))}
-          </select>
-          {card.organization_id && <p className="muted adm-hint">This card belongs to an organization. Only the organization administrator and you can change its design.</p>}
-          {err('template')}
-        </div>
-        <div>
-          <label htmlFor="theme">Colours</label>
+          <label htmlFor="theme">Card colours</label>
           <select id="theme" name="theme" defaultValue={THEMES.some((t) => t.id === card.theme) ? card.theme : 'light'}>
             {THEMES.map((t) => (<option key={t.id} value={t.id}>{t.label}</option>))}
           </select>
           {err('theme')}
+        </div>
+        <div>
+          <label htmlFor="accent_color">Accent color</label>
+          <input
+            id="accent_color"
+            name="accent_color"
+            type="color"
+            defaultValue={initialAccent}
+          />
+          {err('accent_color')}
         </div>
         <div><label htmlFor="phone">Phone</label><input id="phone" name="phone" type="tel" defaultValue={v(card.phone)} maxLength={30} />{err('phone')}</div>
         <div><label htmlFor="whatsapp">WhatsApp number</label><input id="whatsapp" name="whatsapp" type="tel" defaultValue={v(card.whatsapp)} maxLength={30} />{err('whatsapp')}</div>

@@ -1,22 +1,25 @@
-/* Public card page. Three themes: light, dark, teal. Mobile first. */
+/* Public card page. The selected theme sets the surface; each owner can choose a custom accent. */
 .pc-page {
   --pc-bg: #f1f4f6; --pc-card: #ffffff; --pc-ink: #10202e; --pc-mute: #4f6170;
-  --pc-line: #d8e0e6; --pc-acc: #0b6e62; --pc-acc-ink: #ffffff;
+  --pc-line: #d8e0e6; --pc-acc: var(--pc-user-accent, #0b6e62); --pc-acc-ink: var(--pc-user-accent-ink, #ffffff);
+  --pc-acc-text: var(--pc-user-accent-text, var(--pc-acc));
   min-height: 100vh; display: flex; justify-content: center; align-items: flex-start;
-  padding: 24px 16px 40px; background: var(--pc-bg); color: var(--pc-ink);
+  padding: 24px 16px 40px;
+  background: radial-gradient(ellipse 46rem 28rem at 50% -8%, color-mix(in srgb, var(--pc-acc) 12%, transparent), transparent 72%), var(--pc-bg);
+  color: var(--pc-ink);
 }
 .pc-page[data-theme='dark'] {
   --pc-bg: #0c1720; --pc-card: #132430; --pc-ink: #e8eef2; --pc-mute: #a3b3bf;
-  --pc-line: #26394a; --pc-acc: #3ccbb4; --pc-acc-ink: #06201c;
+  --pc-line: #26394a; --pc-acc: var(--pc-user-accent, #3ccbb4); --pc-acc-ink: var(--pc-user-accent-ink, #06201c);
 }
 .pc-page[data-theme='teal'] {
-  --pc-bg: #0b6e62; --pc-card: #ffffff; --pc-ink: #10202e; --pc-mute: #4f6170;
-  --pc-line: #d3e3e0; --pc-acc: #0b6e62; --pc-acc-ink: #ffffff;
+  --pc-bg: #eaf3f1; --pc-card: #ffffff; --pc-ink: #162b2a; --pc-mute: #526a68;
+  --pc-line: #d3e2df; --pc-acc: var(--pc-user-accent, #0b6e62); --pc-acc-ink: var(--pc-user-accent-ink, #ffffff);
 }
 
 .pc-page[data-theme='orion'] {
-  --pc-bg: #e6f6fb; --pc-card: #ffffff; --pc-ink: #10202e; --pc-mute: #4f6170;
-  --pc-line: #cfe6f0; --pc-acc: #1a6fae; --pc-acc-ink: #ffffff;
+  --pc-bg: #eaf1f6; --pc-card: #ffffff; --pc-ink: #172b3a; --pc-mute: #566d7d;
+  --pc-line: #d6e1e8; --pc-acc: var(--pc-user-accent, #1a6fae); --pc-acc-ink: var(--pc-user-accent-ink, #ffffff);
 }
 
 .pc-card {
@@ -47,8 +50,8 @@
 .pc-page[data-theme='dark'] .pc-save { color: var(--pc-acc); }
 
 .pc-socials { list-style: none; margin: 18px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px 16px; justify-content: center; }
-.pc-socials a { color: var(--pc-acc); font-weight: 600; text-decoration: underline; }
-.pc-page[data-theme='teal'] .pc-socials a { color: #0b6e62; }
+.pc-socials a { color: var(--pc-acc-text); font-weight: 600; text-decoration: underline; }
+.pc-page[data-theme='teal'] .pc-socials a { color: var(--pc-acc-text); }
 
 .pc-share { margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--pc-line); }
 .pc-qr { width: 200px; margin: 0 auto; padding: 8px; background: #ffffff; border-radius: 12px; line-height: 0; }
@@ -63,5 +66,5 @@
 .pc-brand { width: 150px; height: auto; }
 .pc-page[data-theme='dark'] .pc-brand { box-sizing: content-box; padding: 6px 10px; background: #ffffff; border-radius: 8px; }
 
-.pc-page a:focus-visible, .pc-page button:focus-visible { outline: 3px solid var(--pc-acc); outline-offset: 2px; }
+.pc-page a:focus-visible, .pc-page button:focus-visible { outline: 3px solid var(--pc-acc-text); outline-offset: 2px; }
 @media (max-width: 340px) { .pc-actions { grid-template-columns: 1fr; } }

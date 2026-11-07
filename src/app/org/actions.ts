@@ -7,7 +7,7 @@ import { checkSlug, checkUsername } from '@/lib/rules'
 import { telHref, emailHref } from '@/lib/links'
 import { BRAND } from '@/lib/brand'
 import { THEME_IDS } from '@/app/dashboard/themes'
-import { TEMPLATE_IDS } from '@/lib/card-templates'
+import { DEFAULT_ACCENTS, isHexAccent } from '@/lib/card-accent'
 import type { CreateState } from '@/app/admin/state'
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
@@ -29,7 +29,7 @@ export async function createStaffAction(_prev: CreateState, fd: FormData): Promi
   const phone = val(fd, 'phone')
   const email = val(fd, 'email')
   const theme = val(fd, 'theme') || 'orion'
-  const template = val(fd, 'template')
+  const accent_color = val(fd, 'accent_color') || DEFAULT_ACCENTS[theme] || DEFAULT_ACCENTS.orion
 
   const u = checkUsername(username); if (u) errors.username = u
   const s = checkSlug(slug); if (s) errors.slug = s
@@ -38,7 +38,7 @@ export async function createStaffAction(_prev: CreateState, fd: FormData): Promi
   if (phone && !telHref(phone)) errors.phone = 'Please enter a valid phone number.'
   if (email && !emailHref(email)) errors.email = 'Please enter a valid email address.'
   if (!THEME_IDS.includes(theme)) errors.theme = 'Please choose a theme.'
-  if (template && !TEMPLATE_IDS.includes(template)) errors.template = 'Please choose a design.'
+  if (!isHexAccent(accent_color)) errors.accent_color = 'Please choose a valid accent color.'
   if (Object.keys(errors).length > 0) return { ok: false, message: 'Please fix the highlighted fields.', errors }
 
   // Card limit of this organization (checked on the server; a very fast double click could slip one extra card through).
@@ -47,7 +47,7 @@ export async function createStaffAction(_prev: CreateState, fd: FormData): Promi
     return { ok: false, message: `Your organization has used all ${org.max_cards} cards. Please contact ${BRAND.name}.`, errors: {} }
   }
 
-  const result = await provisionClient({ username, slug, name, company, designation, phone, email, theme, template: template || null, organizationId: org.id })
+  const result = await provisionClient({ username, slug, name, company, designation, phone, email, theme, accent_color, organizationId: org.id })
   if (!result.ok) return { ok: false, message: result.error, errors: {} }
 
   revalidatePath('/org', 'layout')
@@ -69,20 +69,20 @@ export async function toggleStaffActive(fd: FormData): Promise<void> {
   revalidatePath('/org', 'layout')
 }
 
-// ---------- Choose the design (layout and colours) of one staff card ----------
-// Staff cannot change their own design: the organization decides. The database enforces this too (migration 018).
-export async function setStaffDesign(fd: FormData): Promise<void> {
+// ---------- Choose the card colours for one staff member ----------
+// Staff cannot change the organization's palette. The database enforces this too.
+export async function setStaffAppearance(fd: FormData): Promise<void> {
   const { db, org } = await requireOrgAdmin()
   if (!org.is_active) return
   const id = val(fd, 'card_id')
-  const template = val(fd, 'template')
   const theme = val(fd, 'theme')
-  if (!UUID.test(id) || !TEMPLATE_IDS.includes(template) || !THEME_IDS.includes(theme)) return
+  const accent_color = val(fd, 'accent_color')
+  if (!UUID.test(id) || !THEME_IDS.includes(theme) || !isHexAccent(accent_color)) return
   const { error } = await db
     .from('cards')
-    .update({ template, theme })
+    .update({ theme, accent_color })
     .eq('id', id)
     .eq('organization_id', org.id) // a card of another organization matches nothing
-  if (error) console.error('setStaffDesign failed:', error.message)
+  if (error) console.error('setStaffAppearance failed:', error.message)
   revalidatePath('/org', 'layout')
 }

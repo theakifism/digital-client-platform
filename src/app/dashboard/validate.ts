@@ -1,7 +1,7 @@
 // Checks and cleans everything a client typed. Runs on the SERVER, so it cannot be skipped.
 import { safeUrl, telHref, emailHref } from '@/lib/links'
 import { THEME_IDS } from './themes'
-import { TEMPLATE_IDS } from '@/lib/card-templates'
+import { isHexAccent } from '@/lib/card-accent'
 
 export const SOCIAL_KEYS = ['instagram', 'facebook', 'linkedin', 'youtube', 'x'] as const
 
@@ -18,7 +18,7 @@ export type CardValues = {
   website: string | null
   social_links: Record<string, string>
   theme: string
-  template?: string
+  accent_color: string | null
   photo_url: string | null
 }
 
@@ -83,10 +83,9 @@ export function validateCard(fd: FormData, photoPrefix: string) {
 
   const theme = clean(fd.get('theme'))
   if (!THEME_IDS.includes(theme)) errors.theme = 'Please choose one of the themes.'
-
-  // The template (layout) is optional: when the form does not send one, the card keeps the one it has.
-  const template = clean(fd.get('template'))
-  if (template && !TEMPLATE_IDS.includes(template)) errors.template = 'Please choose one of the designs.'
+  const rawAccent = clean(fd.get('accent_color'))
+  if (rawAccent && !isHexAccent(rawAccent)) errors.accent_color = 'Please choose a valid six-digit color.'
+  const accent_color = rawAccent || null
 
   const photo = clean(fd.get('photo_url'))
   if (photo && (photo.length > 500 || photoPrefix === '' || !photo.startsWith(photoPrefix))) {
@@ -108,8 +107,8 @@ export function validateCard(fd: FormData, photoPrefix: string) {
     website,
     social_links,
     theme,
+    accent_color,
     photo_url: photo || null,
   }
-  if (template) values.template = template
   return { values, errors }
 }

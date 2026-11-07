@@ -5,9 +5,9 @@ import { uploadPhoto } from './upload-photo'
 import { saveCard } from './actions'
 import { initialState } from './state'
 import { THEMES } from './themes'
-import { TEMPLATES, resolveTemplate } from '@/lib/card-templates'
 import { compressToSquareJpeg } from './image'
 import { formatKb } from '@/lib/image-shrink'
+import { DEFAULT_ACCENTS, isHexAccent } from '@/lib/card-accent'
 
 export type EditableCard = {
   id: string
@@ -23,8 +23,8 @@ export type EditableCard = {
   website: string | null
   social_links: Record<string, string> | null
   theme: string
-  template?: string | null
-  locked?: boolean // true when the card belongs to an organization: the organization chooses the design
+  accent_color: string | null
+  locked?: boolean // true when the card belongs to an organization: the organization chooses the palette
   photo_url: string | null
 }
 
@@ -41,8 +41,10 @@ export default function CardEditor({ card }: { card: EditableCard; ownerId: stri
   const [photo, setPhoto] = useState(card.photo_url ?? '')
   const [photoMsg, setPhotoMsg] = useState('')
   const [uploading, setUploading] = useState(false)
-  const [theme, setTheme] = useState(THEMES.some((t) => t.id === card.theme) ? card.theme : 'light')
-  const [template, setTemplate] = useState<string>(resolveTemplate(card.template))
+  const initialTheme = THEMES.some((t) => t.id === card.theme) ? card.theme : 'light'
+  const storedAccent = card.accent_color ?? ''
+  const [theme, setTheme] = useState(initialTheme)
+  const [accentColor, setAccentColor] = useState(isHexAccent(storedAccent) ? storedAccent : DEFAULT_ACCENTS[initialTheme])
   const fileRef = useRef<HTMLInputElement>(null)
 
   const err = (key: string) =>
@@ -106,7 +108,7 @@ export default function CardEditor({ card }: { card: EditableCard; ownerId: stri
             </div>
             <input ref={fileRef} type="file" accept="image/*" hidden onChange={onPickPhoto} />
             <p className="muted" role="status" style={{ margin: '0.5rem 0 0' }}>
-              {photoMsg || 'A square photo of your face or logo works best.'}
+              {photoMsg || 'A clear portrait or logo works best. It will be cropped to fit the wide card header.'}
             </p>
             {err('photo')}
           </div>
@@ -198,35 +200,32 @@ export default function CardEditor({ card }: { card: EditableCard; ownerId: stri
         <h2>Card look</h2>
         {card.locked ? (
           <>
-            <p className="muted">The design and colours of your card are chosen by your organization.</p>
+            <p className="muted">Your organization manages the card colours. You can personalize your card with your photo, profile, and contact details above.</p>
             <input type="hidden" name="theme" value={theme} />
-            <input type="hidden" name="template" value={template} />
+            <input type="hidden" name="accent_color" value={accentColor} />
           </>
         ) : (
           <>
-            <fieldset className="dash-templates">
-              <legend className="muted">Choose a design</legend>
-              {TEMPLATES.map((t) => (
-                <label key={t.id} className={template === t.id ? 'dash-tpl dash-tpl-on' : 'dash-tpl'}>
-                  <input type="radio" name="template" value={t.id} checked={template === t.id} onChange={() => setTemplate(t.id)} />
-                  <span className="dash-tpl-name">{t.label}</span>
-                  <span className="dash-tpl-text muted">{t.description}</span>
-                </label>
-              ))}
-            </fieldset>
-            {err('template')}
-            <fieldset className="dash-themes" style={{ marginTop: '1rem' }}>
-              <legend className="muted">Choose the colours</legend>
+            <fieldset className="dash-themes">
+              <legend className="muted">Choose a base style</legend>
               {THEMES.map((t) => (
                 <label key={t.id}>
-                  <input type="radio" name="theme" value={t.id} checked={theme === t.id} onChange={() => setTheme(t.id)} />
+                  <input type="radio" name="theme" value={t.id} checked={theme === t.id} onChange={() => { setTheme(t.id); setAccentColor(DEFAULT_ACCENTS[t.id]) }} />
                   <span className="dash-dot" style={{ background: t.swatch }} />
                   {t.label}
                 </label>
               ))}
             </fieldset>
             {err('theme')}
-            <p className="muted" style={{ marginTop: '0.75rem' }}>Save, then open your card to see the new look.</p>
+            <div className="dash-accent-picker">
+              <label htmlFor="accent_color">Your card accent</label>
+              <div className="dash-accent-row">
+                <input id="accent_color" name="accent_color" type="color" value={accentColor} onChange={(e) => setAccentColor(e.target.value)} />
+                <span className="muted">Choose any brand color. Text contrast adjusts automatically.</span>
+              </div>
+              {err('accent_color')}
+            </div>
+            <p className="muted" style={{ marginTop: '0.75rem' }}>Your card keeps one clear layout while the colors, photo, and profile details make it yours.</p>
           </>
         )}
       </section>

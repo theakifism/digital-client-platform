@@ -1,16 +1,17 @@
 import type { Metadata } from 'next'
+import type { CSSProperties } from 'react'
 import { notFound } from 'next/navigation'
 import QRCode from 'qrcode'
 import { getPublicCard, getSearchChoice, siteUrl } from '@/lib/card'
 import { getPublicBlocks } from '@/lib/blocks'
 import { BRAND } from '@/lib/brand'
 import { safeUrl, telHref, whatsappHref, emailHref, directionsHref } from '@/lib/links'
-import { resolveTemplate } from '@/lib/card-templates'
+import { accentTextColor, accentTextOnSurface, isHexAccent } from '@/lib/card-accent'
 import Tracker from './tracker'
-import { CardTemplate } from './templates'
+import { SignatureCard } from './signature-card'
 import type { CardCtx, Contact } from './card-parts'
 import './card.css'
-import './templates.css'
+import './signature-card.css'
 
 // Always fresh, so edits made by a client show up immediately.
 export const dynamic = 'force-dynamic'
@@ -57,7 +58,15 @@ export default async function CardPage({ params }: Props) {
   const qrSvg = await QRCode.toString(pageUrl, { type: 'svg', margin: 1, width: 200, errorCorrectionLevel: 'M' })
 
   const theme = THEMES.includes(card.theme) ? card.theme : 'light'
-  const template = resolveTemplate(card.template)
+  const storedAccent = card.accent_color ?? ''
+  const accentColor = isHexAccent(storedAccent) ? storedAccent : null
+  const cardStyle = accentColor
+    ? ({
+        '--pc-user-accent': accentColor,
+        '--pc-user-accent-ink': accentTextColor(accentColor),
+        '--pc-user-accent-text': accentTextOnSurface(accentColor, theme === 'dark'),
+      } as CSSProperties)
+    : undefined
   const photo = safeUrl(card.photo_url)
   const displayName = card.name || card.company || 'Digital card'
   const initial = displayName.trim().charAt(0).toUpperCase()
@@ -90,9 +99,9 @@ export default async function CardPage({ params }: Props) {
   const ctx: CardCtx = { card, photo, displayName, initial, badge, contacts, hasSite, socials, pageUrl, qrSvg }
 
   return (
-    <main className="pc-page" data-theme={theme} data-template={template}>
+    <main className="pc-page" data-theme={theme} style={cardStyle}>
       <Tracker slug={card.slug} />
-      <CardTemplate id={template} ctx={ctx} />
+      <SignatureCard ctx={ctx} />
     </main>
   )
 }

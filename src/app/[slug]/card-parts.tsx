@@ -4,8 +4,8 @@ import { BRAND } from '@/lib/brand'
 import ShareButtons from './share-buttons'
 import LeadForm from './lead-form'
 
-// Shared building blocks of the card templates (Milestone 22). Server code: no state, no effects.
-export type IconName = 'phone' | 'chat' | 'mail' | 'pin' | 'globe' | 'user-plus' | 'qr' | 'share'
+// Shared server components used by the public card.
+export type IconName = 'phone' | 'chat' | 'mail' | 'pin' | 'globe'
 
 export type Contact = {
   key: 'call' | 'whatsapp' | 'email' | 'directions' | 'website' // also the name used for activity counting (data-track)
@@ -56,31 +56,6 @@ const PATHS: Record<IconName, ReactNode> = {
       <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
     </>
   ),
-  'user-plus': (
-    <>
-      <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-      <circle cx="8.5" cy="7" r="4" />
-      <line x1="20" y1="8" x2="20" y2="14" />
-      <line x1="23" y1="11" x2="17" y2="11" />
-    </>
-  ),
-  qr: (
-    <>
-      <rect x="3" y="3" width="7" height="7" />
-      <rect x="14" y="3" width="7" height="7" />
-      <rect x="14" y="14" width="7" height="7" />
-      <rect x="3" y="14" width="7" height="7" />
-    </>
-  ),
-  share: (
-    <>
-      <circle cx="18" cy="5" r="3" />
-      <circle cx="6" cy="12" r="3" />
-      <circle cx="18" cy="19" r="3" />
-      <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
-      <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
-    </>
-  ),
 }
 
 export function Ico({ name }: { name: IconName }) {
@@ -100,7 +75,7 @@ export function Photo({ ctx, size = 440 }: { ctx: CardCtx; size?: number }) {
   return <div className="tp-photo tp-noPhoto" aria-hidden="true">{ctx.initial}</div>
 }
 
-// Wavy edge drawn with CSS-coloured SVG paths (colours come from templates.css, so every theme works).
+// Wavy edge drawn with CSS-coloured SVG paths (colours come from the card's accent palette).
 export function Wave({ stroke = true }: { stroke?: boolean }) {
   return (
     <svg className="tp-wave" viewBox="0 0 440 64" preserveAspectRatio="none" aria-hidden="true" focusable="false">
@@ -126,19 +101,6 @@ export function Rows({ ctx }: { ctx: CardCtx }) {
   )
 }
 
-export function IconButtons({ ctx }: { ctx: CardCtx }) {
-  if (ctx.contacts.length === 0) return null
-  return (
-    <div className="tp-icons">
-      {ctx.contacts.map((c) => (
-        <a key={c.key} className="tp-ibtn" href={c.href} aria-label={c.label} data-track={c.key} {...(c.external ? EXT : {})}>
-          <Ico name={c.icon} />
-        </a>
-      ))}
-    </div>
-  )
-}
-
 export function ExtraLinks({ ctx }: { ctx: CardCtx }) {
   return (
     <div className="tp-links">
@@ -159,7 +121,7 @@ export function Socials({ ctx }: { ctx: CardCtx }) {
   )
 }
 
-// Message form, QR code, share buttons and the "Powered by" footer: the same in every template, styled by each.
+// Message form, QR code, share buttons and the "Powered by" footer for the public card.
 export function Tail({ ctx }: { ctx: CardCtx }) {
   return (
     <>
@@ -183,15 +145,5 @@ export function Footer() {
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img className="pc-brand" src={BRAND.logo} alt={BRAND.name} width={BRAND.logoWidth} height={BRAND.logoHeight} />
     </footer>
-  )
-}
-
-// Floating bar at the bottom of the card: Add to contact + jump to the QR code.
-export function FloatingBar({ ctx }: { ctx: CardCtx }) {
-  return (
-    <div className="tp-bar">
-      <a className="tp-barBtn" href="#share" aria-label="Show the QR code and share"><Ico name="qr" /></a>
-      <a className="tp-barPill" href={`/${ctx.card.slug}/vcard`} download><Ico name="user-plus" /> Add to contact</a>
-    </div>
   )
 }

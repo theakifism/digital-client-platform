@@ -12,7 +12,7 @@
 .pc-lead-consent input { width: 1.2rem; height: 1.2rem; margin-top: 0.15rem; flex: none; }
 .pc-lead-consent label { font-weight: 400; margin: 0; }
 .pc-lead a { color: var(--pc-acc); }
-.pc-page[data-theme='teal'] .pc-lead a { color: #0b6e62; }
+.pc-page[data-theme='teal'] .pc-lead a { color: var(--pc-acc-text); }
 .pc-lead .pc-hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
 .pc-lead button[type='submit'] {
   min-height: 48px; border-radius: 12px; font-weight: 600; font-size: 1rem; cursor: pointer;

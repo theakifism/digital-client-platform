@@ -28,23 +28,23 @@ export default async function DashboardPage({ searchParams }: Props) {
   type DashCard = {
     id: string; slug: string; is_active: boolean; name: string | null; designation: string | null; company: string | null
     bio: string | null; phone: string | null; whatsapp: string | null; email: string | null; address: string | null
-    map_url: string | null; website: string | null; social_links: unknown; theme: string; photo_url: string | null
-    template?: string | null; organization_id?: string | null
+    map_url: string | null; website: string | null; social_links: unknown; theme: string; accent_color: string | null; photo_url: string | null
+    organization_id?: string | null
   }
-  const withDesign = await supabase
+  const withOrganization = await supabase
     .from('cards')
     .select(
-      'id, slug, is_active, name, designation, company, bio, phone, whatsapp, email, address, map_url, website, social_links, theme, photo_url, template, organization_id'
+      'id, slug, is_active, name, designation, company, bio, phone, whatsapp, email, address, map_url, website, social_links, theme, accent_color, photo_url, organization_id'
     )
     .eq('owner_id', user.id)
     .order('created_at', { ascending: true })
-  let cards = withDesign.data as unknown as DashCard[] | null
-  if (withDesign.error) {
-    // Migrations 017 or 018 are not run yet: open the dashboard without the design choice instead of failing.
-    console.error('dashboard cards (with design) failed:', withDesign.error.message)
+  let cards = withOrganization.data as unknown as DashCard[] | null
+  if (withOrganization.error) {
+    // Migration 017 may not be run yet: open the dashboard without the organization lock instead of failing.
+    console.error('dashboard cards (with organization) failed:', withOrganization.error.message)
     const plain = await supabase
       .from('cards')
-      .select('id, slug, is_active, name, designation, company, bio, phone, whatsapp, email, address, map_url, website, social_links, theme, photo_url')
+      .select('id, slug, is_active, name, designation, company, bio, phone, whatsapp, email, address, map_url, website, social_links, theme, accent_color, photo_url')
       .eq('owner_id', user.id)
       .order('created_at', { ascending: true })
     cards = plain.data as unknown as DashCard[] | null
@@ -138,7 +138,7 @@ export default async function DashboardPage({ searchParams }: Props) {
               website: selected.website,
               social_links: selected.social_links as EditableCard['social_links'],
               theme: selected.theme,
-              template: selected.template ?? null,
+              accent_color: selected.accent_color,
               locked: Boolean(selected.organization_id),
               photo_url: selected.photo_url,
             }}

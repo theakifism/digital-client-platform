@@ -47,10 +47,6 @@ button.secondary { background: transparent; color: var(--text); border: 1px soli
 .dash-actions { position: sticky; bottom: 0; background: var(--bg); padding: 0.75rem 0 0.25rem; margin-top: 1rem; border-top: 1px solid var(--border); }
 
 /* Card design chooser (Milestone 22) */
-.dash-templates { display: grid; gap: 0.5rem; border: 0; padding: 0; margin: 0; }
-.dash-templates legend { padding: 0; margin-bottom: 0.5rem; }
-.dash-tpl { display: grid; grid-template-columns: auto 1fr; column-gap: 0.6rem; row-gap: 0.1rem; align-items: start; padding: 0.7rem 0.8rem; border: 1px solid var(--border); border-radius: 10px; cursor: pointer; }
-.dash-tpl input { grid-row: 1 / span 2; width: auto; margin-top: 0.2rem; }
-.dash-tpl-name { font-weight: 700; }
-.dash-tpl-text { font-size: 0.9rem; }
-.dash-tpl-on { border-color: currentColor; background: rgba(127, 127, 127, 0.08); }
+.dash-accent-picker { margin-top: 1rem; }
+.dash-accent-row { display: flex; align-items: center; gap: 0.8rem; }
+.dash-accent-row input[type='color'] { width: 3rem; height: 2.75rem; padding: 0.2rem; border: 1px solid var(--border); border-radius: 0.6rem; background: transparent; cursor: pointer; }
