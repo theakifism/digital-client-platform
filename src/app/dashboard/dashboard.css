@@ -1,5 +1,5 @@
 /* Client dashboard. Uses the colours from globals.css, so light and dark work automatically. */
-.dash { max-width: 40rem; margin: 0 auto; padding: 1.25rem 1rem 3rem; }
+.dash { max-width: 78rem; margin: 0 auto; padding: 1.25rem 1rem 3rem; }
 .dash h1 { margin: 0.75rem 0 0.25rem; }
 .dash h2 { margin: 0 0 0.75rem; font-size: 1.15rem; }
 .dash-top { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
@@ -45,6 +45,51 @@ button.secondary { background: transparent; color: var(--text); border: 1px soli
 .dash-dot { width: 1rem; height: 1rem; border-radius: 50%; border: 1px solid var(--border); }
 
 .dash-actions { position: sticky; bottom: 0; background: var(--bg); padding: 0.75rem 0 0.25rem; margin-top: 1rem; border-top: 1px solid var(--border); }
+
+.dash-editor-layout { display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(18rem, 0.92fr); gap: 1rem; align-items: start; }
+.dash-editor-fields { min-width: 0; }
+.dash-editor-intro { margin-top: 0; }
+.dash-editor-intro p { margin: 0; }
+.dash-preview-panel { position: sticky; top: 1rem; min-width: 0; padding: 1rem; border: 1px solid var(--border); border-radius: 0.75rem; background: var(--bg); }
+.dash-preview-heading { display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; margin-bottom: 0.9rem; }
+.dash-preview-heading h2 { margin: 0; }
+.dash-preview-heading p { margin: 0.15rem 0 0; font-size: 0.88rem; }
+.dash-preview-status { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.3rem 0.55rem; border-radius: 99px; color: var(--text); background: var(--notice-bg); font-size: 0.78rem; font-weight: 650; white-space: nowrap; }
+.dash-preview-status span { width: 0.45rem; height: 0.45rem; border-radius: 50%; background: #0b8d76; }
+.dash-preview-card { max-width: 30rem; margin: 0 auto; overflow: hidden; border: 1px solid var(--dash-preview-line); border-radius: 1.5rem; color: var(--dash-preview-ink); background: var(--dash-preview-surface); box-shadow: 0 16px 38px rgba(13, 35, 52, 0.14); }
+.dash-preview-hero { position: relative; height: clamp(11rem, 25vw, 15rem); overflow: hidden; background: linear-gradient(140deg, var(--dash-preview-accent), var(--dash-preview-deep)); }
+.dash-preview-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 30%; }
+.dash-preview-initial { position: absolute; inset: 0; display: grid; place-items: center; color: var(--dash-preview-accent-ink); font-size: clamp(5rem, 12vw, 7rem); font-weight: 760; }
+.dash-preview-shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(5,18,30,.08) 15%, rgba(5,18,30,.08) 46%, rgba(5,18,30,.38)); }
+.dash-preview-label { position: absolute; z-index: 1; top: 1rem; left: 1rem; display: inline-flex; align-items: center; gap: 0.45rem; padding: 0.45rem 0.7rem; border: 1px solid rgba(255,255,255,.28); border-radius: 99px; color: white; background: rgba(12,28,42,.36); font-size: 0.72rem; font-weight: 650; }
+.dash-preview-label i { width: 0.4rem; height: 0.4rem; border-radius: 50%; background: #8ee0ce; }
+.dash-preview-wave { position: absolute; z-index: 1; left: -6%; bottom: -2.4rem; width: 112%; height: 4.8rem; border-radius: 50% 50% 0 0 / 45% 45% 0 0; background: var(--dash-preview-surface); transform: rotate(-2deg); }
+.dash-preview-mark { position: absolute; z-index: 2; right: 1.2rem; bottom: 1.15rem; display: grid; place-items: center; width: 3.25rem; height: 3.25rem; border: 3px solid var(--dash-preview-surface); border-radius: 50%; color: var(--dash-preview-accent-ink); background: var(--dash-preview-accent); box-shadow: 0 7px 20px rgba(8,24,38,.2); font-size: 0.85rem; font-weight: 800; }
+.dash-preview-body { padding: 1.2rem 1.25rem 1.3rem; }
+.dash-preview-company { margin: 0 0 0.35rem; color: var(--dash-preview-accent); font-size: 0.7rem; font-weight: 780; letter-spacing: 0.12em; text-transform: uppercase; overflow-wrap: anywhere; }
+.dash-preview-body h3 { margin: 0; font-size: clamp(1.35rem, 4vw, 1.65rem); line-height: 1.15; letter-spacing: -0.03em; overflow-wrap: anywhere; }
+.dash-preview-role { margin: 0.35rem 0 0; color: var(--dash-preview-muted); font-size: 0.9rem; }
+.dash-preview-bio { margin: 0.9rem 0 0; padding-top: 0.8rem; border-top: 1px solid var(--dash-preview-line); color: var(--dash-preview-muted); font-size: 0.88rem; line-height: 1.55; overflow-wrap: anywhere; }
+.dash-preview-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.5rem; margin-top: 1rem; }
+.dash-preview-actions span { display: grid; place-items: center; min-height: 2.55rem; padding: 0.4rem; border: 1px solid var(--dash-preview-line); border-radius: 0.7rem; color: var(--dash-preview-ink); background: color-mix(in srgb, var(--dash-preview-surface) 90%, var(--dash-preview-accent)); font-size: 0.78rem; font-weight: 700; text-align: center; }
+.dash-preview-actions .is-primary { grid-column: 1 / -1; border-color: var(--dash-preview-accent); color: var(--dash-preview-accent-ink); background: var(--dash-preview-accent); }
+.dash-preview-contacts { margin-top: 0.9rem; border-top: 1px solid var(--dash-preview-line); }
+.dash-preview-contacts p { display: flex; justify-content: space-between; gap: 0.5rem; margin: 0; padding: 0.6rem 0; color: var(--dash-preview-muted); font-size: 0.78rem; }
+.dash-preview-contacts p span { flex: none; }
+.dash-preview-contacts p b { color: var(--dash-preview-ink); font-weight: 600; text-align: right; overflow-wrap: anywhere; }
+.dash-preview-contacts p + p { border-top: 1px solid var(--dash-preview-line); }
+.dash-preview-links { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.75rem; }
+.dash-preview-links span { padding: 0.25rem 0.45rem; border-radius: 99px; color: var(--dash-preview-accent); background: color-mix(in srgb, var(--dash-preview-accent) 8%, var(--dash-preview-surface)); font-size: 0.72rem; font-weight: 650; text-transform: capitalize; }
+.dash-preview-note { max-width: 30rem; margin: 0.75rem auto 0; color: var(--muted); font-size: 0.82rem; line-height: 1.45; }
+
+@media (max-width: 54rem) {
+  .dash-editor-layout { grid-template-columns: minmax(0, 1fr); }
+  .dash-preview-panel { position: static; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dash-preview-card { scroll-behavior: auto; }
+}
 
 /* Card design chooser (Milestone 22) */
 .dash-accent-picker { margin-top: 1rem; }
