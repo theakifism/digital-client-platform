@@ -435,38 +435,51 @@ body:has(> .ui3d) { background: #eef1fa; }
   .ui3d.workspace-ui .button.secondary { background: #19231e; }
 }
 
-/* Keep the authenticated workspaces flat and focused. Cinematic depth remains on the public pages. */
-.ui3d.workspace-ui::before { content: none; }
+/* Give the workspace a quiet sense of depth without moving the content around. */
+.ui3d.workspace-ui::before { content: ''; }
 .ui3d.workspace-ui .shell-mobilebar,
 .ui3d.workspace-ui .shell-side,
 .ui3d.workspace-ui .shell-nav-dock,
 .ui3d.workspace-ui .shell-nav-menu,
-.ui3d.workspace-ui .shell-nav-more-menu { backdrop-filter: none; -webkit-backdrop-filter: none; }
-.ui3d.workspace-ui .shell-mobilebar { background: var(--u-solid); }
+.ui3d.workspace-ui .shell-nav-more-menu { backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+.ui3d.workspace-ui .shell-mobilebar { background: var(--u-glass); box-shadow: 0 5px 18px rgba(24, 44, 36, .06); }
 .ui3d.workspace-ui .dash-section,
 .ui3d.workspace-ui .adm-box,
 .ui3d.workspace-ui .adm-stat,
-.ui3d.workspace-ui .adm-scroll { box-shadow: none; transition: none; }
+.ui3d.workspace-ui .adm-scroll { box-shadow: var(--u-shadow-1); transition: transform .2s ease, box-shadow .2s ease; }
 .ui3d.workspace-ui .dash-section:hover,
 .ui3d.workspace-ui .adm-box:hover,
-.ui3d.workspace-ui a.adm-stat:hover { transform: none; box-shadow: none; }
+.ui3d.workspace-ui a.adm-stat:hover { transform: translateY(-2px); box-shadow: var(--u-shadow-2), inset 0 1px 0 var(--u-edge); }
 .ui3d.workspace-ui .dash-qr,
 .ui3d.workspace-ui .dash-qr:hover,
-.ui3d.workspace-ui .dash-photo-img { transform: none; box-shadow: none; }
-.ui3d.workspace-ui .dash-actions { background: var(--u-solid); border: 1px solid var(--border); box-shadow: none; backdrop-filter: none; -webkit-backdrop-filter: none; }
-.ui3d.workspace-ui .check-bar { box-shadow: none; }
+.ui3d.workspace-ui .dash-photo-img { transform: none; box-shadow: var(--u-shadow-1); }
+.ui3d.workspace-ui .dash-actions { background: var(--u-glass); border: 1px solid var(--border); box-shadow: var(--u-shadow-2); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+.ui3d.workspace-ui .check-bar { box-shadow: inset 0 1px 2px rgba(24, 44, 36, .12); }
 .ui3d.workspace-ui .check-bar::-webkit-progress-value,
 .ui3d.workspace-ui .check-bar::-moz-progress-bar,
-.ui3d.workspace-ui .adm-fill { background: var(--accent); box-shadow: none; }
+.ui3d.workspace-ui .adm-fill { background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 82%, white), var(--accent)); box-shadow: inset 0 1px 0 rgba(255,255,255,.35); }
 .ui3d.workspace-ui button,
-.ui3d.workspace-ui .button { box-shadow: none; transition: background-color .15s ease, color .15s ease, border-color .15s ease; }
+.ui3d.workspace-ui .button { box-shadow: var(--u-btn-shadow); transition: transform .15s ease, box-shadow .15s ease, filter .15s ease; }
 .ui3d.workspace-ui button:hover:not(:disabled),
-.ui3d.workspace-ui .button:hover { filter: none; transform: none; box-shadow: none; }
+.ui3d.workspace-ui .button:hover { filter: brightness(1.03); transform: translateY(-1px); box-shadow: 0 7px 16px rgba(18, 82, 65, .16); }
 .ui3d.workspace-ui button:active:not(:disabled),
-.ui3d.workspace-ui .button:active { transform: none; filter: none; box-shadow: none; }
+.ui3d.workspace-ui .button:active { transform: translateY(1px); filter: none; box-shadow: inset 0 2px 4px rgba(18, 82, 65, .16); }
 .ui3d.workspace-ui input:not([type='checkbox']):not([type='radio']):not([type='file']),
 .ui3d.workspace-ui textarea,
-.ui3d.workspace-ui select { border: 1px solid var(--border); box-shadow: none; background: var(--u-solid); }
+.ui3d.workspace-ui select { border: 1px solid var(--border); box-shadow: var(--u-field); background: var(--u-solid); }
+
+@media (prefers-reduced-motion: reduce) {
+  .ui3d.workspace-ui .dash-section,
+  .ui3d.workspace-ui .adm-box,
+  .ui3d.workspace-ui .adm-stat,
+  .ui3d.workspace-ui button,
+  .ui3d.workspace-ui .button { transition: none; }
+  .ui3d.workspace-ui .dash-section:hover,
+  .ui3d.workspace-ui .adm-box:hover,
+  .ui3d.workspace-ui a.adm-stat:hover,
+  .ui3d.workspace-ui button:hover:not(:disabled),
+  .ui3d.workspace-ui .button:hover { transform: none; }
+}
 
 @media (prefers-color-scheme: dark) {
   .ui3d.workspace-ui input,
