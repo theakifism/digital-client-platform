@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, type CSSProperties, type PointerEvent as ReactPointerEvent, type KeyboardEvent, type ReactNode } from 'react'
+import type { CSSProperties, PointerEvent as ReactPointerEvent, KeyboardEvent, ReactNode } from 'react'
 import type { CardAction, CardDesign, CardDesignElement, CardField } from '@/lib/card-design'
 import { CARD_HEIGHT, CARD_WIDTH, defaultActionLabel, resolveDesignColor } from '@/lib/card-design'
 import { accentTextColor } from '@/lib/card-accent'
@@ -20,8 +20,6 @@ export type CanvasValues = {
 
 export type CanvasActionLink = { href: string; label?: string; external?: boolean; track?: string }
 export type CanvasActionLinks = Partial<Record<CardAction, CanvasActionLink>>
-export type CanvasDragMode = 'move' | 'resize'
-
 type Props = {
   design: CardDesign
   values: CanvasValues
@@ -32,7 +30,7 @@ type Props = {
   editMode?: boolean
   selectedId?: string | null
   onSelect?: (id: string) => void
-  onElementPointerDown?: (element: CardDesignElement, mode: CanvasDragMode, x: number, y: number, width: number, height: number) => void
+  onElementPointerDown?: (element: CardDesignElement, x: number, y: number, width: number, height: number) => void
   onPointerMove?: (x: number, y: number, width: number, height: number) => void
   onPointerUp?: () => void
 }
@@ -61,10 +59,6 @@ export default function CardCanvas({
   onPointerMove,
   onPointerUp,
 }: Props) {
-  const touchPressTimer = useRef<number | null>(null)
-  const touchClickTimer = useRef<number | null>(null)
-  const pendingTouch = useRef<{ pointerId: number; x: number; y: number } | null>(null)
-  const ignoreTouchClick = useRef(false)
   const palette = theme === 'dark'
     ? { ink: '#f0f4f6', muted: '#b4c0ca' }
     : theme === 'teal'
@@ -79,65 +73,13 @@ export default function CardCanvas({
   const initial = values.name.trim().charAt(0).toUpperCase() || companyMark.charAt(0)
   const canvasStyle = { '--card-design-background': design.background } as CSSProperties & Record<string, string>
 
-  function startPointer(e: ReactPointerEvent<HTMLElement>, element: CardDesignElement, mode: CanvasDragMode) {
+  function startPointer(e: ReactPointerEvent<HTMLElement>, element: CardDesignElement) {
     if (!editMode) return
     e.preventDefault()
     e.stopPropagation()
     e.currentTarget.setPointerCapture(e.pointerId)
     const bounds = e.currentTarget.closest('.card-design-canvas')?.getBoundingClientRect()
-    if (!bounds) return
-
-    if (e.pointerType === 'touch') {
-      ignoreTouchClick.current = true
-      if (touchClickTimer.current !== null) window.clearTimeout(touchClickTimer.current)
-      touchClickTimer.current = window.setTimeout(() => {
-        ignoreTouchClick.current = false
-        touchClickTimer.current = null
-      }, 800)
-
-      if (mode === 'move') {
-        const press = { pointerId: e.pointerId, x: e.clientX, y: e.clientY }
-        pendingTouch.current = press
-        touchPressTimer.current = window.setTimeout(() => {
-          if (pendingTouch.current?.pointerId !== press.pointerId) return
-          pendingTouch.current = null
-          touchPressTimer.current = null
-          onElementPointerDown?.(element, mode, press.x, press.y, bounds.width, bounds.height)
-        }, 420)
-        return
-      }
-    }
-
-    onElementPointerDown?.(element, mode, e.clientX, e.clientY, bounds.width, bounds.height)
-  }
-
-  function handleCanvasPointerMove(e: ReactPointerEvent<HTMLDivElement>) {
-    const press = pendingTouch.current
-    if (press?.pointerId === e.pointerId) {
-      if (Math.hypot(e.clientX - press.x, e.clientY - press.y) > 9) {
-        if (touchPressTimer.current !== null) window.clearTimeout(touchPressTimer.current)
-        touchPressTimer.current = null
-        pendingTouch.current = null
-      }
-      return
-    }
-    const bounds = e.currentTarget.getBoundingClientRect()
-    onPointerMove?.(e.clientX, e.clientY, bounds.width, bounds.height)
-  }
-
-  function finishPointer() {
-    if (touchPressTimer.current !== null) window.clearTimeout(touchPressTimer.current)
-    touchPressTimer.current = null
-    pendingTouch.current = null
-    onPointerUp?.()
-  }
-
-  function consumeTouchClick() {
-    if (!ignoreTouchClick.current) return false
-    ignoreTouchClick.current = false
-    if (touchClickTimer.current !== null) window.clearTimeout(touchClickTimer.current)
-    touchClickTimer.current = null
-    return true
+    if (bounds) onElementPointerDown?.(element, e.clientX, e.clientY, bounds.width, bounds.height)
   }
 
   function handleKeyDown(e: KeyboardEvent<HTMLElement>, id: string) {
@@ -150,14 +92,13 @@ export default function CardCanvas({
     <div
       className={`card-design-canvas${editMode ? ' is-editable' : ''} ${width === height ? 'is-square' : 'is-portrait'}`}
       style={{ ...canvasStyle, aspectRatio: `${width} / ${height}` }}
-      onPointerMove={handleCanvasPointerMove}
-      onPointerUp={finishPointer}
-      onPointerCancel={finishPointer}
-      onClick={(e) => {
-        if (!editMode) return
-        if (consumeTouchClick()) { e.preventDefault(); e.stopPropagation(); return }
-        onSelect?.('')
+      onPointerMove={(e) => {
+        const bounds = e.currentTarget.getBoundingClientRect()
+        onPointerMove?.(e.clientX, e.clientY, bounds.width, bounds.height)
       }}
+      onPointerUp={() => onPointerUp?.()}
+      onPointerCancel={() => onPointerUp?.()}
+      onClick={() => { if (editMode) onSelect?.('') }}
     >
       {design.elements.map((element, index) => {
         const selected = editMode && selectedId === element.id
@@ -233,28 +174,11 @@ export default function CardCanvas({
             tabIndex={editMode ? 0 : undefined}
             aria-label={editMode ? elementLabel(element, values) : undefined}
             aria-pressed={editMode ? selected : undefined}
-            onClick={(e) => {
-              if (!editMode) return
-              if (consumeTouchClick()) { e.preventDefault(); e.stopPropagation(); return }
-              e.stopPropagation()
-              onSelect?.(element.id)
-            }}
+            onClick={(e) => { if (editMode) { e.stopPropagation(); onSelect?.(element.id) } }}
             onKeyDown={(e) => handleKeyDown(e, element.id)}
-            onPointerDown={(e) => startPointer(e, element, 'move')}
+            onPointerDown={(e) => startPointer(e, element)}
           >
             {contents}
-            {selected && (
-              <button
-                type="button"
-                className="card-design-resize"
-                aria-label="Resize selected element"
-                onPointerDown={(e) => startPointer(e, element, 'resize')}
-                onClick={(e) => {
-                  if (consumeTouchClick()) e.preventDefault()
-                  e.stopPropagation()
-                }}
-              />
-            )}
           </div>
         )
       })}

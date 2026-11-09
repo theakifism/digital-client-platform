@@ -40,7 +40,6 @@
 .card-design-element.is-editable { cursor: grab; touch-action: none; }
 .card-design-element.is-editable:active { cursor: grabbing; }
 .card-design-element.is-selected { outline: 2px solid #2788ff; outline-offset: -1px; }
-.card-design-resize { position: absolute; z-index: 5; right: 2px; bottom: 2px; width: 14px; height: 14px; padding: 0; border: 2px solid #ffffff; border-radius: 50%; background: #2788ff; box-shadow: 0 1px 5px rgba(0,0,0,.35); cursor: nwse-resize; touch-action: none; }
 .card-design-canvas.is-editable .card-design-element:focus-visible { outline: 2px solid #2788ff; outline-offset: 1px; }
 .card-design-canvas.is-editable .card-design-action { pointer-events: none; }
 
@@ -71,10 +70,4 @@
 
 @media (max-width: 380px) {
   .card-design-canvas { border-radius: 20px; }
-}
-
-@media (pointer: coarse), (max-width: 56rem) {
-  .card-design-resize { width: 20px; height: 20px; border-width: 2px; }
-  .card-design-element.element-photo.is-selected,
-  .card-design-element.element-action.is-selected { overflow: visible; }
 }

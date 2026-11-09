@@ -11,7 +11,7 @@ import {
   type CSSProperties,
   type FormEvent,
 } from 'react'
-import CardCanvas, { type CanvasActionLinks, type CanvasValues, type CanvasDragMode } from '@/app/card-canvas'
+import CardCanvas, { type CanvasActionLinks, type CanvasValues } from '@/app/card-canvas'
 import {
   CARD_ACTIONS,
   CARD_FIELDS,
@@ -161,7 +161,7 @@ export default function CardEditor({ card }: { card: EditableCard; ownerId: stri
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const fileRef = useRef<HTMLInputElement>(null)
   const drag = useRef<{
-    id: string; mode: CanvasDragMode; startX: number; startY: number; startW: number; startH: number; startClientX: number; startClientY: number; viewportW: number; viewportH: number
+    id: string; startX: number; startY: number; startClientX: number; startClientY: number; viewportW: number; viewportH: number
   } | null>(null)
   const locked = Boolean(card.locked)
   const selected = design.elements.find((item) => item.id === selectedId) ?? null
@@ -220,11 +220,11 @@ export default function CardEditor({ card }: { card: EditableCard; ownerId: stri
     setSelectedId(null)
   }
 
-  function onElementPointerDown(element: CardDesignElement, pointerMode: CanvasDragMode, x: number, y: number, width: number, height: number) {
+  function onElementPointerDown(element: CardDesignElement, x: number, y: number, width: number, height: number) {
     if (locked) return
     setSelectedId(element.id)
     drag.current = {
-      id: element.id, mode: pointerMode, startX: element.x, startY: element.y, startW: element.w, startH: element.h,
+      id: element.id, startX: element.x, startY: element.y,
       startClientX: x, startClientY: y, viewportW: width, viewportH: height,
     }
   }
@@ -238,17 +238,10 @@ export default function CardEditor({ card }: { card: EditableCard; ownerId: stri
       ...current,
       elements: current.elements.map((item) => {
         if (item.id !== active.id) return item
-        if (active.mode === 'move') {
-          return {
-            ...item,
-            x: Math.max(0, Math.min(CARD_WIDTH - item.w, active.startX + dx)),
-            y: Math.max(0, Math.min(CARD_HEIGHT - item.h, active.startY + dy)),
-          }
-        }
         return {
           ...item,
-          w: Math.max(Math.min(24, CARD_WIDTH - active.startX), Math.min(CARD_WIDTH - active.startX, active.startW + dx)),
-          h: Math.max(Math.min(16, CARD_HEIGHT - active.startY), Math.min(CARD_HEIGHT - active.startY, active.startH + dy)),
+          x: Math.max(0, Math.min(CARD_WIDTH - item.w, active.startX + dx)),
+          y: Math.max(0, Math.min(CARD_HEIGHT - item.h, active.startY + dy)),
         }
       }),
     }))
@@ -362,7 +355,7 @@ export default function CardEditor({ card }: { card: EditableCard; ownerId: stri
         <div>
           <span className="card-editor-eyebrow">YOUR BUSINESS CARD</span>
           <h2>Edit your card</h2>
-          <p>Select an item on the card (press and hold on mobile), then drag to move it. Use the blue corner to resize.</p>
+          <p>Tap an item to select it, then drag it to move. Change its width and height in Design Controls.</p>
         </div>
         <button type="button" className="secondary" onClick={() => setMode('gallery')} disabled={locked}>Change starting design</button>
       </div>
@@ -457,7 +450,11 @@ export default function CardEditor({ card }: { card: EditableCard; ownerId: stri
                 </>
               )}
 
-              <label htmlFor="selected-font-size">Size: {selected.fontSize}px</label>
+              <label htmlFor="selected-width">Width: {selected.w}px</label>
+              <input id="selected-width" type="range" min={8} max={Math.max(8, CARD_WIDTH - selected.x)} step={4} value={selected.w} onChange={(e) => updateElement({ w: Number(e.target.value) })} />
+              <label htmlFor="selected-height">Height: {selected.h}px</label>
+              <input id="selected-height" type="range" min={8} max={Math.max(8, CARD_HEIGHT - selected.y)} step={4} value={selected.h} onChange={(e) => updateElement({ h: Number(e.target.value) })} />
+              <label htmlFor="selected-font-size">Text size: {selected.fontSize}px</label>
               <input id="selected-font-size" type="range" min={10} max={64} value={selected.fontSize} onChange={(e) => updateElement({ fontSize: Number(e.target.value) })} />
               <label htmlFor="selected-radius">Rounded corners: {selected.radius}px</label>
               <input id="selected-radius" type="range" min={0} max={180} value={selected.radius} onChange={(e) => updateElement({ radius: Number(e.target.value) })} />
