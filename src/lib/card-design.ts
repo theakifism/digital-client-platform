@@ -67,7 +67,7 @@ function text(id: string, content: string, x: number, y: number, w: number, h: n
 }
 
 function photo(x: number, y: number, w: number, h: number, radius: number): CardDesignElement {
-  return { id: 'portrait', type: 'photo', x, y, w, h, fontSize: 18, color: 'ink', font: 'sans', weight: 500, align: 'center', background: 'accent', radius }
+  return { id: 'portrait', type: 'photo', x, y, w, h, fontSize: 18, color: 'accent', font: 'sans', weight: 500, align: 'center', background: 'surface', radius }
 }
 
 function shape(id: string, kind: CardShape, x: number, y: number, w: number, h: number, background: string, radius = 0): CardDesignElement {
@@ -94,7 +94,7 @@ export const CARD_TEMPLATES: CardTemplate[] = [
       elements: [
         shape('hero-panel', 'rect', 0, 0, 360, 174, 'accent'),
         photo(24, 28, 92, 92, 50),
-        field('company', 'company', 24, 143, 312, 20, { fontSize: 12, color: 'accent', weight: 800 }),
+        field('company', 'company', 24, 143, 312, 20, { fontSize: 12, color: 'onAccent', weight: 800 }),
         field('name', 'name', 24, 184, 312, 42, { fontSize: 31, weight: 800 }),
         field('designation', 'designation', 24, 227, 312, 28, { fontSize: 16, color: 'muted' }),
         field('bio', 'bio', 24, 268, 312, 82, { fontSize: 15, color: 'muted' }),

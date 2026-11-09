@@ -117,7 +117,7 @@ function makeElement(type: 'text' | 'shape' | 'action' | 'photo' | 'field', id: 
   if (type === 'text') return { ...base, type, text: 'Your text' }
   if (type === 'shape') return { ...base, type, y: 370, w: 120, h: 8, background: 'accent', shape: 'rect' }
   if (type === 'action') return { ...base, type, y: 470, h: 46, fontSize: 14, color: 'onAccent', background: 'accent', radius: 14, weight: 700, align: 'center', action: 'website' }
-  if (type === 'photo') return { ...base, type, x: 24, y: 28, w: 92, h: 92, background: 'accent', radius: 50, align: 'center' }
+  if (type === 'photo') return { ...base, type, x: 24, y: 28, w: 92, h: 92, color: 'accent', background: 'surface', radius: 50, align: 'center' }
   return { ...base, type, field: 'name' }
 }
 
