@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { Suspense } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { usePathname, useSearchParams } from 'next/navigation'
 
 // Small line icons (24x24). Each icon is a few path strokes.
@@ -20,7 +20,7 @@ const ICONS = {
 } as const
 
 export type IconName = keyof typeof ICONS
-export type NavItem = { href: string; label: string; short?: string; icon: IconName; keepCard?: boolean }
+export type NavItem = { href: string; label: string; short?: string; icon: IconName; keepCard?: boolean; group?: string }
 
 function Icon({ name }: { name: IconName }) {
   return (
@@ -34,39 +34,73 @@ function Icon({ name }: { name: IconName }) {
 
 const pathOf = (href: string) => href.split('#')[0].split('?')[0]
 
-function Items({ items, variant, label }: { items: NavItem[]; variant: 'side' | 'dock' | 'strip'; label: string }) {
+function Items({ items, variant, label }: { items: NavItem[]; variant: 'side' | 'dock' | 'menu'; label: string }) {
   const pathname = usePathname()
   const card = useSearchParams().get('card')
+  const [hash, setHash] = useState('')
+
+  useEffect(() => {
+    const updateHash = () => setHash(window.location.hash)
+    updateHash()
+    window.addEventListener('hashchange', updateHash)
+    return () => window.removeEventListener('hashchange', updateHash)
+  }, [pathname])
 
   // The item whose address is the longest match for the page you are on is the active one.
   let active = -1
   let best = -1
   items.forEach((it, i) => {
-    if (it.href.includes('#')) return
     const p = pathOf(it.href)
-    const hit = pathname === p || pathname.startsWith(p + '/')
-    if (hit && p.length > best) {
+    const anchor = it.href.includes('#') ? `#${it.href.split('#')[1]}` : ''
+    const hit = (pathname === p || pathname.startsWith(p + '/')) && (!anchor || (pathname === p && hash === anchor))
+    if (hit && (p.length > best || (anchor && pathname === p))) {
       best = p.length
       active = i
     }
   })
 
+  const dockItems = variant === 'dock' && items.length > 4 ? items.slice(0, 3) : items
+  const moreItems = variant === 'dock' && items.length > 4 ? items.slice(3) : []
+
+  function renderLink(it: NavItem, i: number) {
+    const anchor = it.href.includes('#') ? `#${it.href.split('#')[1]}` : ''
+    const base = it.href.split('#')[0]
+    const href = it.keepCard && card ? `${base}${base.includes('?') ? '&' : '?'}card=${encodeURIComponent(card)}${anchor}` : it.href
+    return (
+      <Link key={it.href} href={href} aria-current={i === active ? 'page' : undefined} onClick={(event) => {
+        if (variant === 'menu') event.currentTarget.closest('details')?.removeAttribute('open')
+      }}>
+        <Icon name={it.icon} />
+        <span>{variant === 'dock' && it.short ? it.short : it.label}</span>
+      </Link>
+    )
+  }
+
+  const renderedItems = variant === 'side' || variant === 'menu'
+    ? items.map((it, i) => (
+      <div className="shell-nav-entry" key={it.href}>
+        {it.group && items[i - 1]?.group !== it.group && <span className="shell-nav-group-label">{it.group}</span>}
+        {renderLink(it, i)}
+      </div>
+    ))
+    : dockItems.map((it, i) => renderLink(it, i))
+
   return (
     <nav className={`shell-nav shell-nav-${variant}`} aria-label={label}>
-      {items.map((it, i) => {
-        const href = it.keepCard && card ? `${it.href.split('#')[0]}?card=${encodeURIComponent(card)}${it.href.includes('#') ? '#' + it.href.split('#')[1] : ''}` : it.href
-        return (
-          <Link key={it.href} href={href} aria-current={i === active ? 'page' : undefined}>
-            <Icon name={it.icon} />
-            <span>{variant === 'dock' && it.short ? it.short : it.label}</span>
-          </Link>
-        )
-      })}
+      {renderedItems}
+      {moreItems.length > 0 && (
+        <details className="shell-nav-more">
+          <summary aria-current={moreItems.some((item) => active === items.indexOf(item)) ? 'page' : undefined}>
+            <Icon name="grid" /><span>More</span>
+          </summary>
+          <div className="shell-nav-more-menu">{moreItems.map((it) => renderLink(it, items.indexOf(it)))}</div>
+        </details>
+      )}
     </nav>
   )
 }
 
-export default function ShellNav(props: { items: NavItem[]; variant: 'side' | 'dock' | 'strip'; label: string }) {
+export default function ShellNav(props: { items: NavItem[]; variant: 'side' | 'dock' | 'menu'; label: string }) {
   return (
     <Suspense fallback={<nav className={`shell-nav shell-nav-${props.variant}`} aria-label={props.label} />}>
       <Items {...props} />

@@ -32,7 +32,10 @@ export default async function AdminOverview() {
 
   return (
     <main>
-      <h1>Overview</h1>
+      <header className="adm-page-heading">
+        <div><span className="adm-kicker">OPERATIONS</span><h1>Overview</h1><p className="muted">A clear view of cards, clients, and platform health.</p></div>
+        <div className="adm-row"><Link className="button" href="/admin/cards/new">Create client card</Link><Link className="button secondary" href="/admin/cards/bulk">Bulk upload</Link></div>
+      </header>
 
       <div className="adm-stats">
         <Link className="adm-stat" href="/admin/requests"><strong>{newRequests}</strong><span>new requests</span></Link>
@@ -41,42 +44,36 @@ export default async function AdminOverview() {
         <div className="adm-stat"><strong>{allRequests}</strong><span>requests in total</span></div>
       </div>
 
-      <section className="adm-box">
-        <h2>Setup check</h2>
-        <ul className="adm-checks">
-          {setup.map((c) => (
-            <li key={c.label}>
-              <strong className={c.ok ? 'adm-ok' : 'adm-bad'}>{c.ok ? 'OK' : 'Needs attention'}</strong> · {c.label}
-              {!c.ok && <div className="muted">{c.detail}</div>}
-            </li>
-          ))}
-        </ul>
-      </section>
+      <div className="adm-overview-grid">
+        <section className="adm-box">
+          <h2>Setup check</h2>
+          <ul className="adm-checks">
+            {setup.map((c) => (
+              <li key={c.label}>
+                <strong className={c.ok ? 'adm-ok' : 'adm-bad'}>{c.ok ? 'OK' : 'Needs attention'}</strong> · {c.label}
+                {!c.ok && <div className="muted">{c.detail}</div>}
+              </li>
+            ))}
+          </ul>
+        </section>
 
-      <section className="adm-box">
-        <h2>Free plan usage</h2>
-        {usage ? (
-          <>
-            {photosBytes === null ? (
-              <p className="muted">Photos and files ({storeName()}): the size could not be read.</p>
-            ) : (
-              <Meter label={`Photos and files (${storeName()})`} used={photosBytes} limit={storeLimitBytes()} />
-            )}
-            <Meter label="Database" used={usage.db_bytes} limit={FREE_DB} />
-            <p className="muted">Plan the upgrade to a paid plan when either bar passes 80%, and before you go live with all clients.</p>
-          </>
-        ) : (
-          <p className="notice">Usage numbers are not available yet. Run migration 005 in the Supabase SQL Editor.</p>
-        )}
-      </section>
-
-      <section className="adm-box">
-        <h2>Quick actions</h2>
-        <div className="adm-row">
-          <Link className="button" href="/admin/cards/new">Create a client card</Link>
-          <Link className="button secondary" href="/admin/cards/bulk">Bulk upload (CSV)</Link>
-        </div>
-      </section>
+        <section className="adm-box">
+          <h2>Free plan usage</h2>
+          {usage ? (
+            <>
+              {photosBytes === null ? (
+                <p className="muted">Photos and files ({storeName()}): the size could not be read.</p>
+              ) : (
+                <Meter label={`Photos and files (${storeName()})`} used={photosBytes} limit={storeLimitBytes()} />
+              )}
+              <Meter label="Database" used={usage.db_bytes} limit={FREE_DB} />
+              <p className="muted">Plan the upgrade to a paid plan when either bar passes 80%, and before you go live with all clients.</p>
+            </>
+          ) : (
+            <p className="notice">Usage numbers are not available yet. Run migration 005 in the Supabase SQL Editor.</p>
+          )}
+        </section>
+      </div>
     </main>
   )
 }

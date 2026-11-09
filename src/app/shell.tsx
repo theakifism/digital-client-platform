@@ -3,8 +3,6 @@ import { BRAND } from '@/lib/brand'
 import ShellNav, { type NavItem } from './shell-nav'
 import './ui3d.css'
 
-// The frame around the client dashboard and the admin panel (Milestone 19):
-// a floating glass sidebar on computers; on phones a top bar plus either a floating dock (client) or a scrolling strip (admin).
 export default function Shell({
   title,
   who,
@@ -15,7 +13,7 @@ export default function Shell({
   title: string
   who: string
   items: NavItem[]
-  mobile: 'dock' | 'strip'
+  mobile: 'dock' | 'menu'
   children: React.ReactNode
 }) {
   const logout = (
@@ -29,31 +27,44 @@ export default function Shell({
       <img src={BRAND.logo} alt={BRAND.name} width={BRAND.logoWidth} height={BRAND.logoHeight} />
     </Link>
   )
+  const initials = who.split(/[\s,]+/).filter(Boolean).slice(0, 2).map((part) => part[0]).join('').toUpperCase() || 'U'
 
   return (
-    <div className="ui3d">
+    <div className="ui3d workspace-ui" data-mobile-nav={mobile}>
       <div className="shell">
         <div className="shell-mobilebar">
           <header className="shell-top">
             {logo}
+            <span className="shell-mobile-title">{title}</span>
             {logout}
           </header>
-          {mobile === 'strip' && <ShellNav items={items} variant="strip" label={title} />}
+          {mobile === 'menu' && (
+            <details className="shell-mobile-menu">
+              <summary>Open navigation <span aria-hidden="true">⌄</span></summary>
+              <ShellNav items={items} variant="menu" label={`${title} navigation`} />
+            </details>
+          )}
         </div>
 
         <aside className="shell-side">
           {logo}
-          <p className="shell-title">{title}</p>
+          <p className="shell-section-label">WORKSPACE</p>
           <ShellNav items={items} variant="side" label={title} />
           <div className="shell-foot">
-            <span className="muted">{who}</span>
-            {logout}
+            <span className="shell-avatar" aria-hidden="true">{initials}</span>
+            <span className="shell-account"><strong>{who}</strong><small>Signed in</small></span>
           </div>
         </aside>
 
         {mobile === 'dock' && <ShellNav items={items} variant="dock" label={title} />}
 
-        <div className="shell-main">{children}</div>
+        <div className="shell-main">
+          <header className="shell-workbar">
+            <div><span className="shell-workbar-label">{title}</span><span className="shell-workbar-caption">Manage your digital business presence</span></div>
+            <div className="shell-workbar-account"><span className="shell-avatar" aria-hidden="true">{initials}</span><span>{who}</span>{logout}</div>
+          </header>
+          {children}
+        </div>
       </div>
     </div>
   )

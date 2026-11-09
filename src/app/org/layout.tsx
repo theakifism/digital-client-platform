@@ -10,12 +10,11 @@ const ITEMS: NavItem[] = [
   { href: '/org/staff/new', label: 'Add staff card', short: 'Add', icon: 'plus' },
 ]
 
-// The frame around every organization page (Milestone 21). Structure only: the visual design comes later.
 export default async function OrgLayout({ children }: { children: React.ReactNode }) {
   const { username, org } = await requireOrgAdmin()
 
   return (
-    <Shell title="Organization" who={`${org.name}, ${username}`} items={ITEMS} mobile="strip">
+    <Shell title="Organization" who={`${org.name}, ${username}`} items={ITEMS} mobile="menu">
       <div className="adm">
         {org.is_active ? (
           children

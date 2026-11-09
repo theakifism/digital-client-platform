@@ -61,3 +61,19 @@ button.secondary, .button.secondary { background: transparent; color: var(--text
 @media (prefers-color-scheme: dark) { .adm-ok { color: #6ee7a0; } .adm-bad { color: #ff9a90; } }
 .adm-checks { list-style: none; padding: 0; margin: 0; }
 .adm-checks li { padding: 0.4rem 0; border-bottom: 1px solid rgba(128, 128, 128, 0.3); }
+
+.adm-page-heading { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1rem; }
+.adm-page-heading h1 { margin: .2rem 0 .3rem; }
+.adm-page-heading p { margin: 0; }
+.adm-kicker { color: var(--accent); font-size: .68rem; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; }
+.adm-overview-grid { display: grid; gap: .85rem; }
+.adm-overview-grid > * { margin-top: 0; }
+
+@media (min-width: 54rem) {
+  .adm-overview-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
+}
+@media (max-width: 46rem) {
+  .adm-page-heading { align-items: flex-start; flex-direction: column; }
+  .adm-page-heading > .adm-row { width: 100%; }
+  .adm-page-heading > .adm-row > * { flex: 1; }
+}

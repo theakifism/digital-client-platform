@@ -76,48 +76,48 @@ export default async function DashboardPage({ searchParams }: Props) {
 
   return (
     <main className="dash">
-      <h1>Your dashboard</h1>
-      <p className="muted">Hello, {hello}.</p>
+      <header className="dash-page-heading">
+        <div><span className="dash-kicker">WORKSPACE OVERVIEW</span><h1>Welcome back{hello ? `, ${hello}` : ''}</h1>
+          <p className="muted">Your card, messages, and sharing tools in one place.</p></div>
+        {selected && <a className="button" href={`/${selected.slug}`} target="_blank" rel="noopener noreferrer">Preview my card</a>}
+      </header>
 
       {!selected ? (
         <p className="notice">Your card is being prepared. We will let you know when it is ready.</p>
       ) : (
         <>
           {list.length > 1 && (
-            <p className="dash-row">
-              Your cards:{' '}
+            <nav className="dash-card-switcher" aria-label="Choose a card">
+              <span>Your cards</span>
               {list.map((c) => (
                 <Link key={c.slug} href={`/dashboard?card=${c.slug}`} aria-current={c.slug === selected.slug ? 'page' : undefined}>
                   {c.slug === selected.slug ? <strong>/{c.slug}</strong> : `/${c.slug}`}
                 </Link>
               ))}
-            </p>
+            </nav>
           )}
 
-          <Checklist card={selected} />
-
-          <CardLinkBox slug={selected.slug} active={selected.is_active} />
-
-          <section className="dash-section">
-            <h2>Small website</h2>
-            <p className="muted" style={{ marginTop: 0 }}>
-              A longer page with your story, services, photos, reviews and questions. It opens from a button on your card.
-            </p>
-            <div className="dash-row">
-              <Link className="button" href={`/dashboard/website?card=${selected.slug}`}>Edit my small website</Link>
-              <a href={`/${selected.slug}/site`} target="_blank" rel="noopener noreferrer">View it</a>
+          <div className="dash-overview-grid">
+            <div className="dash-overview-primary">
+              <CardLinkBox slug={selected.slug} active={selected.is_active} />
+              <Checklist card={selected} />
             </div>
-          </section>
-
-          <section className="dash-section">
-            <h2>Social media posts</h2>
-            <p className="muted" style={{ marginTop: 0 }}>
-              Ready-made pictures for festivals and offers, filled in with your business name, phone and photo. Download and share on WhatsApp or Instagram.
-            </p>
-            <div className="dash-row">
-              <Link className="button" href={`/dashboard/posts?card=${selected.slug}`}>Make a post</Link>
+            <div className="dash-overview-tools">
+              <section className="dash-section dash-shortcut-card">
+                <span className="dash-shortcut-icon" aria-hidden="true">↗</span><h2>Your small website</h2>
+                <p className="muted">Add your story, services, photos, reviews, and FAQs.</p>
+                <div className="dash-row">
+                  <Link className="button" href={`/dashboard/website?card=${selected.slug}`}>Manage website</Link>
+                  <a href={`/${selected.slug}/site`} target="_blank" rel="noopener noreferrer">Preview</a>
+                </div>
+              </section>
+              <section className="dash-section dash-shortcut-card">
+                <span className="dash-shortcut-icon" aria-hidden="true">▧</span><h2>Social media posts</h2>
+                <p className="muted">Create ready-to-share business posts for WhatsApp and Instagram.</p>
+                <div className="dash-row"><Link className="button" href={`/dashboard/posts?card=${selected.slug}`}>Create a post</Link></div>
+              </section>
             </div>
-          </section>
+          </div>
 
           <ActivityPanel cardId={selected.id} />
 
@@ -168,8 +168,8 @@ async function CardLinkBox({ slug, active }: { slug: string; active: boolean }) 
   const qr = await QRCode.toString(url, { type: 'svg', margin: 1, width: 160, errorCorrectionLevel: 'M' })
 
   return (
-    <section className="dash-section" id="card-link">
-      <h2>Your card link</h2>
+    <section className="dash-section dash-link-card" id="card-link">
+      <div className="dash-link-card-copy"><span className="dash-kicker">READY TO SHARE</span><h2>Your business card</h2>
       {!active && (
         <p className="notice" style={{ marginBottom: '0.75rem' }}>
           Your card is switched off right now, so visitors see a &quot;not found&quot; page. Please contact the team to switch it on.
@@ -178,10 +178,11 @@ async function CardLinkBox({ slug, active }: { slug: string; active: boolean }) 
       <p className="dash-link"><a href={`/${slug}`} target="_blank" rel="noopener noreferrer">{url.replace(/^https?:\/\//, '')}</a></p>
       <div className="dash-row">
         <a className="button" href={`/${slug}`} target="_blank" rel="noopener noreferrer">Open my card</a>
-        <Link className="button" href="#edit-card">Edit my card</Link>
+        <Link className="button secondary" href="#edit-card">Edit my card</Link>
         <CopyLink url={url} />
       </div>
-      <div className="dash-qr" role="img" aria-label="QR code for your card" dangerouslySetInnerHTML={{ __html: qr }} style={{ marginTop: '1rem' }} />
+      </div>
+      <div className="dash-qr" role="img" aria-label="QR code for your card" dangerouslySetInnerHTML={{ __html: qr }} />
     </section>
   )
 }
