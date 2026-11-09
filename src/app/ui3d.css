@@ -434,3 +434,42 @@ body:has(> .ui3d) { background: #eef1fa; }
   .ui3d.workspace-ui button.secondary,
   .ui3d.workspace-ui .button.secondary { background: #19231e; }
 }
+
+/* Keep the authenticated workspaces flat and focused. Cinematic depth remains on the public pages. */
+.ui3d.workspace-ui::before { content: none; }
+.ui3d.workspace-ui .shell-mobilebar,
+.ui3d.workspace-ui .shell-side,
+.ui3d.workspace-ui .shell-nav-dock,
+.ui3d.workspace-ui .shell-nav-menu,
+.ui3d.workspace-ui .shell-nav-more-menu { backdrop-filter: none; -webkit-backdrop-filter: none; }
+.ui3d.workspace-ui .shell-mobilebar { background: var(--u-solid); }
+.ui3d.workspace-ui .dash-section,
+.ui3d.workspace-ui .adm-box,
+.ui3d.workspace-ui .adm-stat,
+.ui3d.workspace-ui .adm-scroll { box-shadow: none; transition: none; }
+.ui3d.workspace-ui .dash-section:hover,
+.ui3d.workspace-ui .adm-box:hover,
+.ui3d.workspace-ui a.adm-stat:hover { transform: none; box-shadow: none; }
+.ui3d.workspace-ui .dash-qr,
+.ui3d.workspace-ui .dash-qr:hover,
+.ui3d.workspace-ui .dash-photo-img { transform: none; box-shadow: none; }
+.ui3d.workspace-ui .dash-actions { background: var(--u-solid); border: 1px solid var(--border); box-shadow: none; backdrop-filter: none; -webkit-backdrop-filter: none; }
+.ui3d.workspace-ui .check-bar { box-shadow: none; }
+.ui3d.workspace-ui .check-bar::-webkit-progress-value,
+.ui3d.workspace-ui .check-bar::-moz-progress-bar,
+.ui3d.workspace-ui .adm-fill { background: var(--accent); box-shadow: none; }
+.ui3d.workspace-ui button,
+.ui3d.workspace-ui .button { box-shadow: none; transition: background-color .15s ease, color .15s ease, border-color .15s ease; }
+.ui3d.workspace-ui button:hover:not(:disabled),
+.ui3d.workspace-ui .button:hover { filter: none; transform: none; box-shadow: none; }
+.ui3d.workspace-ui button:active:not(:disabled),
+.ui3d.workspace-ui .button:active { transform: none; filter: none; box-shadow: none; }
+.ui3d.workspace-ui input:not([type='checkbox']):not([type='radio']):not([type='file']),
+.ui3d.workspace-ui textarea,
+.ui3d.workspace-ui select { border: 1px solid var(--border); box-shadow: none; background: var(--u-solid); }
+
+@media (prefers-color-scheme: dark) {
+  .ui3d.workspace-ui input,
+  .ui3d.workspace-ui textarea,
+  .ui3d.workspace-ui select { background: #1f2b25; }
+}
