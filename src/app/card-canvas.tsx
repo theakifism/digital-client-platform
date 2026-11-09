@@ -30,7 +30,7 @@ type Props = {
   editMode?: boolean
   selectedId?: string | null
   onSelect?: (id: string) => void
-  onElementPointerDown?: (element: CardDesignElement, x: number, y: number, width: number, height: number) => void
+  onElementPointerDown?: (element: CardDesignElement, x: number, y: number, width: number, height: number, mode?: 'move' | 'resize') => void
   onPointerMove?: (x: number, y: number, width: number, height: number) => void
   onPointerUp?: () => void
 }
@@ -73,13 +73,13 @@ export default function CardCanvas({
   const initial = values.name.trim().charAt(0).toUpperCase() || companyMark.charAt(0)
   const canvasStyle = { '--card-design-background': design.background } as CSSProperties & Record<string, string>
 
-  function startPointer(e: ReactPointerEvent<HTMLElement>, element: CardDesignElement) {
+  function startPointer(e: ReactPointerEvent<HTMLElement>, element: CardDesignElement, mode: 'move' | 'resize' = 'move') {
     if (!editMode) return
     e.preventDefault()
     e.stopPropagation()
     e.currentTarget.setPointerCapture(e.pointerId)
     const bounds = e.currentTarget.closest('.card-design-canvas')?.getBoundingClientRect()
-    if (bounds) onElementPointerDown?.(element, e.clientX, e.clientY, bounds.width, bounds.height)
+    if (bounds) onElementPointerDown?.(element, e.clientX, e.clientY, bounds.width, bounds.height, mode)
   }
 
   function handleKeyDown(e: KeyboardEvent<HTMLElement>, id: string) {
@@ -179,6 +179,13 @@ export default function CardCanvas({
             onPointerDown={(e) => startPointer(e, element)}
           >
             {contents}
+            {selected && (
+              <span
+                className="card-design-resize-handle"
+                aria-hidden="true"
+                onPointerDown={(e) => startPointer(e, element, 'resize')}
+              />
+            )}
           </div>
         )
       })}

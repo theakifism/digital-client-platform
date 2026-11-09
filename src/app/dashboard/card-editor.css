@@ -33,6 +33,8 @@
 .card-editor input:not([type='color']):not([type='range']), .card-editor textarea, .card-editor select, .card-start-gallery select { box-sizing: border-box; width: 100%; min-height: 2.55rem; padding: .55rem .65rem; border: 1px solid var(--border); border-radius: .55rem; background: var(--bg); color: var(--text); font: inherit; }
 .card-editor textarea { resize: vertical; }
 .card-editor input[type='range'] { width: 100%; accent-color: #2788ff; }
+.card-position-presets { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .4rem; }
+.card-position-presets button { min-height: 2.75rem; padding: .45rem .3rem; }
 .card-color-row { display: flex; align-items: center; gap: .6rem; color: var(--muted); font-size: .76rem; }
 .card-color-row input[type='color'] { flex: none; width: 2.6rem; height: 2.3rem; padding: .15rem; border: 1px solid var(--border); border-radius: .5rem; background: transparent; cursor: pointer; }
 .card-element-kind { margin: 0 0 .25rem; color: var(--muted); font-size: .78rem; }

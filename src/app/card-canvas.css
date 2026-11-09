@@ -42,6 +42,7 @@
 .card-design-element.is-selected { outline: 2px solid #2788ff; outline-offset: -1px; }
 .card-design-canvas.is-editable .card-design-element:focus-visible { outline: 2px solid #2788ff; outline-offset: 1px; }
 .card-design-canvas.is-editable .card-design-action { pointer-events: none; }
+.card-design-resize-handle { position: absolute; right: -1px; bottom: -1px; z-index: 1000; width: 24px; height: 24px; border: 2px solid #fff; border-radius: 50%; background: #1683ff; box-shadow: 0 1px 5px rgba(0,0,0,.35); cursor: nwse-resize; touch-action: none; }
 
 .visual-card { display: block; width: min(100%, 390px); margin: 0 auto; }
 .visual-card-heading { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
