@@ -1,67 +1,58 @@
-import { ExtraLinks, Ico, Photo, Rows, Socials, Tail, Wave, type CardCtx } from './card-parts'
+import CardCanvas, { type CanvasActionLinks, type CanvasValues } from '../card-canvas'
+import type { CardAction } from '@/lib/card-design'
+import type { CardCtx } from './card-parts'
+import { ExtraLinks, Rows, Socials, Tail } from './card-parts'
 
-function QuickActions({ ctx }: { ctx: CardCtx }) {
-  const actions = ctx.contacts.filter((contact) => contact.key === 'call' || contact.key === 'whatsapp').slice(0, 2)
-
-  return (
-    <nav className="sig-actions" aria-label="Quick contact">
-      {actions.map((action) => (
-        <a
-          key={action.key}
-          className="sig-action"
-          href={action.href}
-          data-track={action.key}
-          {...(action.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-        >
-          <Ico name={action.icon} />
-          <span>{action.label}</span>
-        </a>
-      ))}
-      <a className="sig-action sig-actionPrimary sig-actionMessage" href="#message">
-        <Ico name="mail" />
-        <span>Send a message</span>
-      </a>
-    </nav>
-  )
+function publicActions(ctx: CardCtx): CanvasActionLinks {
+  const actions: CanvasActionLinks = {}
+  for (const contact of ctx.contacts) {
+    const key = contact.key as CardAction
+    actions[key] = { href: contact.href, label: contact.label, external: contact.external, track: contact.key }
+  }
+  actions.message = { href: '#message', label: 'Send a message' }
+  actions.vcard = { href: `/${ctx.card.slug}/vcard`, label: 'Save to contacts' }
+  if (ctx.hasSite) actions.site = { href: `/${ctx.card.slug}/site`, label: 'Our website' }
+  for (const [name, label] of [
+    ['instagram', 'Instagram'], ['facebook', 'Facebook'], ['linkedin', 'LinkedIn'], ['youtube', 'YouTube'], ['x', 'X'],
+  ]) {
+    const href = ctx.socials.find((social) => social.label === label)?.href
+    if (href) actions[`social_${name}` as CardAction] = { href, label, external: true, track: 'social' }
+  }
+  return actions
 }
+
 export function SignatureCard({ ctx }: { ctx: CardCtx }) {
-  const company = ctx.card.company?.trim()
+  const values: CanvasValues = {
+    name: ctx.card.name ?? '',
+    company: ctx.card.company ?? '',
+    designation: ctx.card.designation ?? '',
+    bio: ctx.card.bio ?? '',
+    phone: ctx.card.phone ?? '',
+    whatsapp: ctx.card.whatsapp ?? '',
+    email: ctx.card.email ?? '',
+    address: ctx.card.address ?? '',
+    website: ctx.card.website ?? '',
+    social_links: ctx.card.social_links ?? {},
+  }
+
   return (
-    <article className="pc-card tp t-signature">
-      <header className="sig-hero">
-        <Photo ctx={ctx} />
-        <div className="sig-heroShade" />
-        <div className="sig-heroMeta">
-          <span className="sig-liveMark" aria-hidden="true" />
-          <span>Digital profile</span>
-        </div>
-        <Wave />
-        <span className="tp-badge sig-brandMark" aria-label={company ? `${company} initials` : 'Business card mark'}>{ctx.badge}</span>
-      </header>
-
-      <div className="sig-body">
-        <div className="sig-identity">
-          {company && <p className="sig-company">{company}</p>}
-          <h1 className="tp-name">{ctx.displayName}</h1>
-          {ctx.card.designation && <p className="tp-role">{ctx.card.designation}</p>}
-        </div>
-
-        {ctx.card.bio && <p className="sig-bio">{ctx.card.bio}</p>}
-
-        <QuickActions ctx={ctx} />
-
-        {ctx.contacts.length > 0 && (
-          <section className="sig-contactSection" aria-label="Contact details">
-            <div className="sig-sectionTitle"><span>Connect</span><i aria-hidden="true" /></div>
-            <Rows ctx={ctx} />
-          </section>
-        )}
-
-        <div className="sig-links"><ExtraLinks ctx={ctx} /></div>
-        <Socials ctx={ctx} />
-      </div>
-
-      <div id="message" className="sig-tail"><Tail ctx={ctx} /></div>
+    <article className="visual-card">
+      <h1 className="visual-card-heading">{ctx.displayName}</h1>
+      <CardCanvas
+        design={ctx.design}
+        values={values}
+        photoUrl={ctx.photo}
+        accentColor={ctx.accentColor}
+        theme={ctx.theme}
+        actions={publicActions(ctx)}
+      />
+      {(ctx.contacts.length > 0 || ctx.hasSite || ctx.socials.length > 0) && (
+        <section className="visual-card-connect" aria-label="Contact and social links">
+          {ctx.contacts.length > 0 && <><h2>Connect</h2><Rows ctx={ctx} /></>}
+          {(ctx.hasSite || ctx.socials.length > 0) && <div className="visual-card-extras"><ExtraLinks ctx={ctx} /><Socials ctx={ctx} /></div>}
+        </section>
+      )}
+      <div className="visual-card-tail" id="message"><Tail ctx={ctx} /></div>
     </article>
   )
 }

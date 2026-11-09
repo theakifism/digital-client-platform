@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import type { PublicCard } from '@/lib/card'
+import type { CardDesign } from '@/lib/card-design'
 import { BRAND } from '@/lib/brand'
 import ShareButtons from './share-buttons'
 import LeadForm from './lead-form'
@@ -20,13 +21,14 @@ export type CardCtx = {
   card: PublicCard
   photo: string | null
   displayName: string
-  initial: string
-  badge: string // up to two letters from the company or name, shown in round badges
   contacts: Contact[]
   hasSite: boolean
   socials: { label: string; href: string }[]
   pageUrl: string
   qrSvg: string
+  design: CardDesign
+  theme: string
+  accentColor: string
 }
 
 const EXT = { target: '_blank', rel: 'noopener noreferrer' } as const
@@ -62,25 +64,6 @@ export function Ico({ name }: { name: IconName }) {
   return (
     <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">
       {PATHS[name]}
-    </svg>
-  )
-}
-
-// The person's photo, filling the box it sits in. Without a photo: a big first letter on a colour.
-export function Photo({ ctx, size = 440 }: { ctx: CardCtx; size?: number }) {
-  if (ctx.photo) {
-    // eslint-disable-next-line @next/next/no-img-element
-    return <img className="tp-photo" src={ctx.photo} alt={ctx.displayName} width={size} height={size} />
-  }
-  return <div className="tp-photo tp-noPhoto" aria-hidden="true">{ctx.initial}</div>
-}
-
-// Wavy edge drawn with CSS-coloured SVG paths (colours come from the card's accent palette).
-export function Wave({ stroke = true }: { stroke?: boolean }) {
-  return (
-    <svg className="tp-wave" viewBox="0 0 440 64" preserveAspectRatio="none" aria-hidden="true" focusable="false">
-      <path className="tp-waveFill" d="M0 40 C 90 2, 200 72, 300 32 S 420 8, 440 24 L440 64 L0 64 Z" />
-      {stroke && <path className="tp-waveLine" d="M0 40 C 90 2, 200 72, 300 32 S 420 8, 440 24" />}
     </svg>
   )
 }

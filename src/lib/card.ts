@@ -19,6 +19,8 @@ export type PublicCard = {
   social_links: Record<string, string> | null
   theme: string
   accent_color: string | null
+  template: string | null
+  design_config: unknown
 }
 
 // cache(): the page and its metadata ask for the same card, but the database is asked only once per visit.
@@ -33,7 +35,7 @@ export const getPublicCard = cache(async (slug: string): Promise<PublicCard | nu
 
   const { data, error } = await supabase
     .from('cards')
-    .select('slug, name, designation, company, bio, photo_url, phone, whatsapp, email, address, map_url, website, social_links, theme, accent_color')
+    .select('slug, name, designation, company, bio, photo_url, phone, whatsapp, email, address, map_url, website, social_links, theme, accent_color, template, design_config')
     .eq('slug', slug)
     .eq('is_active', true)
     .maybeSingle()

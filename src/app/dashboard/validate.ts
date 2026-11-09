@@ -2,6 +2,7 @@
 import { safeUrl, telHref, emailHref } from '@/lib/links'
 import { THEME_IDS } from './themes'
 import { isHexAccent } from '@/lib/card-accent'
+import { isTemplateId, parseCardDesign, type CardDesign } from '@/lib/card-design'
 
 export const SOCIAL_KEYS = ['instagram', 'facebook', 'linkedin', 'youtube', 'x'] as const
 
@@ -19,6 +20,8 @@ export type CardValues = {
   social_links: Record<string, string>
   theme: string
   accent_color: string | null
+  template: string
+  design_config: CardDesign
   photo_url: string | null
 }
 
@@ -87,6 +90,21 @@ export function validateCard(fd: FormData, photoPrefix: string) {
   if (rawAccent && !isHexAccent(rawAccent)) errors.accent_color = 'Please choose a valid six-digit color.'
   const accent_color = rawAccent || null
 
+  const template = clean(fd.get('template'))
+  if (!isTemplateId(template)) errors.template = 'Please choose one of the card designs.'
+  const rawDesign = clean(fd.get('design_config'))
+  let design_config: CardDesign | null = null
+  if (!rawDesign || rawDesign.length > 45000) {
+    errors.design_config = 'The card design is too large. Please remove some elements and try again.'
+  } else {
+    try {
+      design_config = parseCardDesign(JSON.parse(rawDesign))
+    } catch {
+      design_config = null
+    }
+    if (!design_config) errors.design_config = 'This card design is invalid. Please choose a template and try again.'
+  }
+
   const photo = clean(fd.get('photo_url'))
   if (photo && (photo.length > 500 || photoPrefix === '' || !photo.startsWith(photoPrefix))) {
     errors.photo = 'That photo is not valid. Please upload it again.'
@@ -108,6 +126,8 @@ export function validateCard(fd: FormData, photoPrefix: string) {
     social_links,
     theme,
     accent_color,
+    template,
+    design_config: design_config!,
     photo_url: photo || null,
   }
   return { values, errors }

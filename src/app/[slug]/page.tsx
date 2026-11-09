@@ -6,12 +6,13 @@ import { getPublicCard, getSearchChoice, siteUrl } from '@/lib/card'
 import { getPublicBlocks } from '@/lib/blocks'
 import { BRAND } from '@/lib/brand'
 import { safeUrl, telHref, whatsappHref, emailHref, directionsHref } from '@/lib/links'
-import { accentTextColor, accentTextOnSurface, isHexAccent } from '@/lib/card-accent'
+import { accentTextColor, accentTextOnSurface, DEFAULT_ACCENTS, isHexAccent } from '@/lib/card-accent'
+import { safeCardDesign } from '@/lib/card-design'
 import Tracker from './tracker'
 import { SignatureCard } from './signature-card'
 import type { CardCtx, Contact } from './card-parts'
 import './card.css'
-import './signature-card.css'
+import '../card-canvas.css'
 
 // Always fresh, so edits made by a client show up immediately.
 export const dynamic = 'force-dynamic'
@@ -59,24 +60,15 @@ export default async function CardPage({ params }: Props) {
 
   const theme = THEMES.includes(card.theme) ? card.theme : 'light'
   const storedAccent = card.accent_color ?? ''
-  const accentColor = isHexAccent(storedAccent) ? storedAccent : null
-  const cardStyle = accentColor
-    ? ({
-        '--pc-user-accent': accentColor,
-        '--pc-user-accent-ink': accentTextColor(accentColor),
-        '--pc-user-accent-text': accentTextOnSurface(accentColor, theme === 'dark'),
-      } as CSSProperties)
-    : undefined
+  const accentColor = isHexAccent(storedAccent) ? storedAccent : DEFAULT_ACCENTS[theme as keyof typeof DEFAULT_ACCENTS]
+  const cardStyle = {
+    '--pc-user-accent': accentColor,
+    '--pc-user-accent-ink': accentTextColor(accentColor),
+    '--pc-user-accent-text': accentTextOnSurface(accentColor, theme === 'dark'),
+  } as CSSProperties
+  const design = safeCardDesign(card.template, card.design_config)
   const photo = safeUrl(card.photo_url)
   const displayName = card.name || card.company || 'Digital card'
-  const initial = displayName.trim().charAt(0).toUpperCase()
-  const badge = (card.company || displayName)
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((w) => w.charAt(0))
-    .join('')
-    .toUpperCase()
 
   const call = telHref(card.phone)
   const whatsapp = whatsappHref(card.whatsapp)
@@ -96,7 +88,7 @@ export default async function CardPage({ params }: Props) {
     (s): s is { label: string; href: string } => s.href !== null
   )
 
-  const ctx: CardCtx = { card, photo, displayName, initial, badge, contacts, hasSite, socials, pageUrl, qrSvg }
+  const ctx: CardCtx = { card, photo, displayName, contacts, hasSite, socials, pageUrl, qrSvg, design, theme, accentColor }
 
   return (
     <main className="pc-page" data-theme={theme} style={cardStyle}>

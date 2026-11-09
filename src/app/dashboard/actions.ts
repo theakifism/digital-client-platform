@@ -32,6 +32,8 @@ export async function saveCard(_prev: SaveState, formData: FormData): Promise<Sa
   const { data: current } = await supabase.from('cards').select('organization_id').eq('id', cardId).maybeSingle()
   const update: Record<string, unknown> = { ...values }
   if (current?.organization_id) {
+    delete update.template
+    delete update.design_config
     delete update.theme
     delete update.accent_color
   }

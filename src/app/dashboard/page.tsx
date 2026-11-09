@@ -12,6 +12,8 @@ import SearchChoice from './search-choice'
 import WeeklyEmailChoice from './weekly-email-choice'
 import Checklist from './checklist'
 import './dashboard.css'
+import './card-editor.css'
+import '../card-canvas.css'
 
 type Props = { searchParams: Promise<{ card?: string; leads?: string }> }
 
@@ -29,12 +31,13 @@ export default async function DashboardPage({ searchParams }: Props) {
     id: string; slug: string; is_active: boolean; name: string | null; designation: string | null; company: string | null
     bio: string | null; phone: string | null; whatsapp: string | null; email: string | null; address: string | null
     map_url: string | null; website: string | null; social_links: unknown; theme: string; accent_color: string | null; photo_url: string | null
+    template: string | null; design_config: unknown
     organization_id?: string | null
   }
   const withOrganization = await supabase
     .from('cards')
     .select(
-      'id, slug, is_active, name, designation, company, bio, phone, whatsapp, email, address, map_url, website, social_links, theme, accent_color, photo_url, organization_id'
+      'id, slug, is_active, name, designation, company, bio, phone, whatsapp, email, address, map_url, website, social_links, theme, accent_color, photo_url, template, design_config, organization_id'
     )
     .eq('owner_id', user.id)
     .order('created_at', { ascending: true })
@@ -44,7 +47,7 @@ export default async function DashboardPage({ searchParams }: Props) {
     console.error('dashboard cards (with organization) failed:', withOrganization.error.message)
     const plain = await supabase
       .from('cards')
-      .select('id, slug, is_active, name, designation, company, bio, phone, whatsapp, email, address, map_url, website, social_links, theme, accent_color, photo_url')
+      .select('id, slug, is_active, name, designation, company, bio, phone, whatsapp, email, address, map_url, website, social_links, theme, accent_color, photo_url, template, design_config')
       .eq('owner_id', user.id)
       .order('created_at', { ascending: true })
     cards = plain.data as unknown as DashCard[] | null
@@ -126,6 +129,7 @@ export default async function DashboardPage({ searchParams }: Props) {
             ownerId={user.id}
             card={{
               id: selected.id,
+              slug: selected.slug,
               name: selected.name,
               designation: selected.designation,
               company: selected.company,
@@ -139,6 +143,8 @@ export default async function DashboardPage({ searchParams }: Props) {
               social_links: selected.social_links as EditableCard['social_links'],
               theme: selected.theme,
               accent_color: selected.accent_color,
+              template: selected.template,
+              design_config: selected.design_config,
               locked: Boolean(selected.organization_id),
               photo_url: selected.photo_url,
             }}
