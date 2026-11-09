@@ -72,3 +72,9 @@
 @media (max-width: 380px) {
   .card-design-canvas { border-radius: 20px; }
 }
+
+@media (pointer: coarse), (max-width: 56rem) {
+  .card-design-resize { width: 40px; height: 40px; border-width: 3px; }
+  .card-design-element.element-photo.is-selected,
+  .card-design-element.element-action.is-selected { overflow: visible; }
+}

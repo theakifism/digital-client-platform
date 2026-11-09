@@ -21,6 +21,7 @@
 .card-editor-canvas-toolbar button { min-height: 2.25rem; padding: .4rem .65rem; font-size: .82rem; }
 .card-editor-canvas-stage { display: grid; min-height: 36rem; place-items: start center; padding: 1.2rem; background: radial-gradient(ellipse at top, rgba(92, 133, 154, .1), transparent 64%), var(--notice-bg); }
 .card-editor-canvas-stage .card-design-canvas { width: min(100%, 390px); }
+.card-editor-mobile-tools { display: none; }
 .card-editor-photo-note { min-height: 1.3rem; margin: 0; padding: .6rem .9rem; color: var(--muted); font-size: .82rem; }
 .card-editor-inspector { position: sticky; top: 1rem; overflow: hidden; }
 .card-inspector-title { padding: 1rem; border-bottom: 1px solid var(--border); }
@@ -69,6 +70,17 @@
   .card-editor-workspace { grid-template-columns: minmax(0, 1fr); }
   .card-editor-inspector { position: static; }
   .card-editor-canvas-stage { min-height: 0; }
+  .card-editor-mobile-tools { display: grid; gap: .8rem; padding: .85rem; border-bottom: 1px solid var(--border); background: var(--bg); }
+  .card-editor-mobile-tools-title { display: block; margin-bottom: .4rem; font-size: .82rem; font-weight: 750; }
+  .card-editor-mobile-layer-buttons { display: flex; flex-wrap: wrap; gap: .4rem; max-height: 7.1rem; overflow-y: auto; }
+  .card-editor-mobile-layer { max-width: 100%; min-height: 44px; padding: .55rem .7rem; overflow: hidden; border: 1px solid var(--border); border-radius: .7rem; background: var(--bg); color: var(--text); font: inherit; font-size: .82rem; text-overflow: ellipsis; white-space: nowrap; touch-action: manipulation; }
+  .card-editor-mobile-layer.is-active { border-color: #2788ff; background: color-mix(in srgb, #2788ff 11%, var(--bg)); box-shadow: inset 0 0 0 1px #2788ff; }
+  .card-editor-mobile-move { display: flex; align-items: center; justify-content: space-between; gap: .8rem; }
+  .card-editor-mobile-move .card-editor-mobile-tools-title { margin: 0; }
+  .card-editor-mobile-move-buttons { display: flex; gap: .35rem; }
+  .card-editor-mobile-move-buttons button { width: 44px; height: 44px; padding: 0; border: 1px solid var(--border); border-radius: .7rem; background: var(--bg); color: var(--text); font-size: 1.25rem; font-weight: 750; touch-action: manipulation; }
+  .card-editor-mobile-move-buttons button:disabled { opacity: .45; }
+  .card-editor-canvas-stage { padding: .8rem; }
 }
 @media (max-width: 34rem) {
   .card-template-grid { grid-template-columns: minmax(0, 1fr); }
