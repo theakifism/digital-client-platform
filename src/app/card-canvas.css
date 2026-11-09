@@ -74,7 +74,7 @@
 }
 
 @media (pointer: coarse), (max-width: 56rem) {
-  .card-design-resize { width: 40px; height: 40px; border-width: 3px; }
+  .card-design-resize { width: 20px; height: 20px; border-width: 2px; }
   .card-design-element.element-photo.is-selected,
   .card-design-element.element-action.is-selected { overflow: visible; }
 }

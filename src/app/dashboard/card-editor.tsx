@@ -144,14 +144,6 @@ function templateActions(): CanvasActionLinks {
   return editorActionLinks()
 }
 
-function mobileItemName(element: CardDesignElement): string {
-  if (element.type === 'field' && element.field) return PROFILE_FIELDS.find((field) => field.id === element.field)?.label ?? 'Profile field'
-  if (element.type === 'text') return element.text === '{{initial}}' ? 'Initial' : element.text || 'Text'
-  if (element.type === 'action') return element.label || defaultActionLabel(element.action ?? 'call')
-  if (element.type === 'photo') return 'Profile photo'
-  return `${element.shape ?? 'Rectangle'} shape`
-}
-
 export default function CardEditor({ card }: { card: EditableCard; ownerId: string }) {
   const [state, formAction, pending] = useActionState(saveCard, initialState)
   const [profile, setProfile] = useState(() => initialProfile(card))
@@ -235,18 +227,6 @@ export default function CardEditor({ card }: { card: EditableCard; ownerId: stri
       id: element.id, mode: pointerMode, startX: element.x, startY: element.y, startW: element.w, startH: element.h,
       startClientX: x, startClientY: y, viewportW: width, viewportH: height,
     }
-  }
-
-  function nudgeSelected(dx: number, dy: number) {
-    if (locked || !selectedId) return
-    setDesign((current) => ({
-      ...current,
-      elements: current.elements.map((item) => item.id === selectedId ? {
-        ...item,
-        x: Math.max(0, Math.min(CARD_WIDTH - item.w, item.x + dx)),
-        y: Math.max(0, Math.min(CARD_HEIGHT - item.h, item.y + dy)),
-      } : item),
-    }))
   }
 
   function onPointerMove(x: number, y: number) {
@@ -382,7 +362,7 @@ export default function CardEditor({ card }: { card: EditableCard; ownerId: stri
         <div>
           <span className="card-editor-eyebrow">YOUR BUSINESS CARD</span>
           <h2>Edit your card</h2>
-          <p>Select an item on the card or in the mobile item list. Drag to move it; use the arrows on mobile or the blue corner to resize.</p>
+          <p>Select an item on the card (press and hold on mobile), then drag to move it. Use the blue corner to resize.</p>
         </div>
         <button type="button" className="secondary" onClick={() => setMode('gallery')} disabled={locked}>Change starting design</button>
       </div>
@@ -398,39 +378,6 @@ export default function CardEditor({ card }: { card: EditableCard; ownerId: stri
             <button type="button" className="secondary" disabled={locked || design.elements.length >= MAX_CARD_ELEMENTS} onClick={() => addElement('field')}>+ Profile field</button>
             <button type="button" className="secondary" disabled={uploading} onClick={() => fileRef.current?.click()}>{uploading ? 'Uploading…' : photo ? 'Change photo' : 'Upload photo'}</button>
           </div>
-          {!locked && (
-            <section className="card-editor-mobile-tools" aria-label="Select and move card items">
-              <div className="card-editor-mobile-layer-list" role="group" aria-label="Select an item">
-                <span className="card-editor-mobile-tools-title">Tap an item to select it</span>
-                <div className="card-editor-mobile-layer-buttons">
-                  {design.elements.map((element) => {
-                    const label = mobileItemName(element)
-                    return (
-                      <button
-                        key={element.id}
-                        type="button"
-                        className={`card-editor-mobile-layer${selectedId === element.id ? ' is-active' : ''}`}
-                        aria-label={`Select ${label}`}
-                        aria-pressed={selectedId === element.id}
-                        onClick={() => setSelectedId(element.id)}
-                      >
-                        {label}
-                      </button>
-                    )
-                  })}
-                </div>
-              </div>
-              <div className="card-editor-mobile-move" role="group" aria-label="Move selected item">
-                <span className="card-editor-mobile-tools-title">Move selected item</span>
-                <div className="card-editor-mobile-move-buttons">
-                  <button type="button" aria-label="Move selected item left" disabled={!selected} onClick={() => nudgeSelected(-16, 0)}>←</button>
-                  <button type="button" aria-label="Move selected item up" disabled={!selected} onClick={() => nudgeSelected(0, -16)}>↑</button>
-                  <button type="button" aria-label="Move selected item down" disabled={!selected} onClick={() => nudgeSelected(0, 16)}>↓</button>
-                  <button type="button" aria-label="Move selected item right" disabled={!selected} onClick={() => nudgeSelected(16, 0)}>→</button>
-                </div>
-              </div>
-            </section>
-          )}
           <div className="card-editor-canvas-stage">
             <CardCanvas
               design={design} values={values} photoUrl={photo || null} accentColor={accentColor} theme={theme} actions={actions}
