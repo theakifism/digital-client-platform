@@ -317,7 +317,7 @@ export default function CardEditor({ card }: { card: EditableCard; ownerId: stri
         <div className="card-editor-intro">
           <span className="card-editor-eyebrow">YOUR BUSINESS CARD</span>
           <h2 id="card-designs-title">Choose a starting design</h2>
-          <p>Pick one professional design, then make it yours. Move, resize, recolor, rewrite, or add pieces on the editing canvas.</p>
+          <p>Each design is already arranged to look complete with your details. Choose one, add your information, and publish it as-is. You can customize it later if you want.</p>
         </div>
         {locked && <p className="notice">Your organization manages the card design. You can still update your personal details and photo.</p>}
         <div className="card-template-grid">
@@ -358,8 +358,8 @@ export default function CardEditor({ card }: { card: EditableCard; ownerId: stri
       <div className="card-editor-heading">
         <div>
           <span className="card-editor-eyebrow">YOUR BUSINESS CARD</span>
-          <h2>Edit your card</h2>
-          <p>Drag an item to move it. Drag the blue corner to resize it, or use the position and size controls.</p>
+          <h2>Your card is ready</h2>
+          <p>The design is already arranged for you. Add your details and save to publish; customize the layout only if you want to.</p>
         </div>
         <button type="button" className="secondary" onClick={() => setMode('gallery')} disabled={locked}>Change starting design</button>
       </div>

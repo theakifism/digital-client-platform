@@ -39,6 +39,18 @@ function fieldValue(field: CardField, values: CanvasValues): string {
   return values[field] ?? ''
 }
 
+function fittedFieldFontSize(element: CardDesignElement, value: string): number {
+  if (element.type !== 'field' || !['name', 'company', 'designation'].includes(element.field ?? '') || !value.trim()) {
+    return element.fontSize
+  }
+  const averageGlyphWidth = element.font === 'mono' ? 0.62 : element.font === 'serif' ? 0.56 : 0.54
+  const availableWidth = Math.max(1, element.w - 8)
+  const estimatedWidth = value.trim().length * element.fontSize * averageGlyphWidth
+  return estimatedWidth > availableWidth
+    ? Math.max(10, Math.floor(element.fontSize * availableWidth / estimatedWidth))
+    : element.fontSize
+}
+
 const FONT_FAMILY = {
   sans: 'Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
   serif: 'Georgia, "Times New Roman", serif',
@@ -102,13 +114,14 @@ export default function CardCanvas({
     >
       {design.elements.map((element, index) => {
         const selected = editMode && selectedId === element.id
+        const value = element.type === 'field' && element.field ? fieldValue(element.field, values) : ''
         const position: CSSProperties = {
           left: `${(element.x / width) * 100}%`,
           top: `${(element.y / height) * 100}%`,
           width: `${(element.w / width) * 100}%`,
           height: `${(element.h / height) * 100}%`,
           zIndex: selected ? 999 : index + 1,
-          fontSize: `${(element.fontSize / width) * 100}cqw`,
+          fontSize: `${(fittedFieldFontSize(element, value) / width) * 100}cqw`,
           color: resolveDesignColor(element.color, colors),
           fontFamily: FONT_FAMILY[element.font],
           fontWeight: element.weight,
@@ -119,9 +132,8 @@ export default function CardCanvas({
         let contents: ReactNode = null
 
         if (element.type === 'field' && element.field) {
-          const value = fieldValue(element.field, values)
           if (value || editMode) {
-            contents = <span className={`card-design-text field-${element.field}`}>{value || fieldLabel(element.field)}</span>
+            contents = <span className={`card-design-text field-${element.field}${['name', 'company', 'designation'].includes(element.field) ? ' is-single-line' : ''}`}>{value || fieldLabel(element.field)}</span>
           }
         } else if (element.type === 'text') {
           contents = <span className="card-design-text">{element.text === '{{initial}}' ? initial : element.text}</span>
